@@ -1,0 +1,53 @@
+\usepackage{hyperref}
+\usepackage[type={CC},modifier={by-nc-sa}]{doclicense}
+
+%
+
+\usepackage{listings}
+\usepackage{fontspec}
+
+\setmainfont{Linux Libertine O}
+\setsansfont{Linux Biolinum O}
+\setmonofont{Inconsolata ZI4}
+
+\newfontfamily\monopico{Inconsolata ZI4}[Scale=0.55]
+\newfontfamily\mononano{Inconsolata ZI4}[Scale=0.65]
+\newfontfamily\monomini{Inconsolata ZI4}[Scale=0.75]
+\newfontfamily\monomidi{Inconsolata ZI4}[Scale=0.85]
+\newfontfamily\monobase{Inconsolata ZI4}[Scale=0.95]
+\newfontfamily\monomaxi{Inconsolata ZI4}[Scale=1.05]
+
+\lstset{
+  basicstyle=\monobase,         % Monospaced font
+  literate={-}{-}1,             % Do not replace dashes
+  columns=fullflexible,         % Do not mess with column width
+  keepspaces=true,              % Do not replace spaces
+}
+
+\lstdefinestyle{pico}{basicstyle=\linespread{0.55}\monopico}
+\lstdefinestyle{nano}{basicstyle=\linespread{0.65}\mononano}
+\lstdefinestyle{mini}{basicstyle=\linespread{0.75}\monomini}
+\lstdefinestyle{midi}{basicstyle=\linespread{0.85}\monomidi}
+\lstdefinestyle{maxi}{basicstyle=\linespread{1.05}\monomaxi}
+
+%
+
+\newcommand\simplefootnote[1]{\begingroup\renewcommand\thefootnote{}\footnote{#1}\addtocounter{footnote}{-1}\endgroup}
+
+%
+
+\title[Introduction to Middleware]{Introduction to Middleware}
+\author{Petr Tůma}
+\institute{Department of Distributed and Dependable Systems\\Faculty of Mathematics and Physics\\Charles University}
+\date{2017 -- 2018}
+
+\begin{document}
+  \frame{\titlepage}
+  \tableofcontents
+
+  \mode<all>{\input{10--SocketBasedServer.tex}}
+  \mode<all>{\input{20--ProtocolBufferBasics.tex}}
+  \mode<all>{\input{30--GRPCBasedServer.tex}}
+  \mode<all>{\input{40--JGroupsBasedPeer.tex}}
+  \mode<all>{\input{50--SecureServerAccess.tex}}
+\end{document}

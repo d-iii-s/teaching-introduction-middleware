@@ -1,0 +1,234 @@
+\part{Socket Based Server}
+
+
+\section{Berkeley Socket Interface}
+
+
+\begin{frame}{Interface Overview}
+    \begin{block}{Socket}
+        An abstraction representing a (network) communication channel. \\
+        Both stream oriented and message oriented channels. \\
+        Spectrum of supported protocols. \\
+    \end{block}
+
+    \begin{block}{Stream Oriented Channel}
+        Socket on \emph{client side} initiates outgoing connections. \\
+        Socket on \emph{server side} waits for incoming connections. \\
+        Data flows in both directions after connection established. \\
+    \end{block}
+
+    \begin{block}{Message Oriented Channel}
+        No connection established. \\
+        Sender and receiver roles symmetrical. \\
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Stream Oriented Channel}
+    \begin{block}{Client Side Pseudocode}
+\begin{lstlisting}[style=mini]
+socket = CreateSocket (comms_domain, socket_type);
+ConnectToServer (socket, server_address);
+... Write (socket, data);
+... Read (socket, data);
+Close (socket);
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Server Side Pseudocode}
+\begin{lstlisting}[style=mini]
+server_socket = CreateSocket (comms_domain, socket_type);
+BindToLocalAddress (socket, address);
+PermitListeningOnSocket (socket, backlog);
+client_socket, client_address = AcceptIncomingConnection (socket);
+... Write (client_socket, data);
+... Read (client_socket, data);
+Close (client_socket);
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\section{Assignment Details}
+
+
+\begin{frame}{Assignment}
+    \begin{block}{Server}
+        Implement a server that will:
+        \begin{itemize}
+            \item Listen for incoming connections.
+            \item Provide information on current time to connected clients.
+        \end{itemize}
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Client}
+        Implement a client that will:
+        \begin{itemize}
+            \item Connect to the server described above.
+            \item Query information on current time.
+            \item Wrap all this in local function.
+            \item Print the time.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{C Local Function}
+\begin{lstlisting}[language=c,style=mini]
+/**
+ * Return server time in standard structure.
+ * \param result Caller allocated structure to fill.
+ * \return Zero for success, non zero error code otherwise.
+ */
+int server_time (struct tm *result);
+
+struct tm {
+    int tm_sec;    // Seconds (0-60)
+    int tm_min;    // Minutes (0-59)
+    int tm_hour;   // Hours (0-23)
+    int tm_mday;   // Day of the month (1-31)
+    int tm_mon;    // Month (0-11)
+    int tm_year;   // Year - 1900
+    int tm_wday;   // Day of the week (0-6, Sunday = 0)
+    int tm_yday;   // Day in the year (0-365, 1 Jan = 0)
+    int tm_isdst;  // Daylight saving time
+};
+\end{lstlisting}
+    \hfill ... man \lstinline{localtime}
+\end{frame}
+
+
+\begin{frame}[fragile]{Java Local Function}
+\begin{lstlisting}[language=java,style=mini]
+/**
+ * Access server time in standard structure.
+ */
+public interface ServerTime {
+    int getSecond ();           // Gets the second-of-minute field.
+    int getMinute ();           // Gets the minute-of-hour field.
+    int getHour ();             // Gets the hour-of-day field.
+    int getDayOfMonth ();       // Gets the day-of-month field.
+    Month getMonth ();          // Gets the month-of-year field.
+    int getYear ();             // Gets the year field.
+    DayOfWeek getDayOfWeek ();  // Gets the day-of-week field.
+    int getDayOfYear ();        // Gets the day-of-year field.
+}
+\end{lstlisting}
+    \hfill ... javadoc \lstinline{LocalDateTime}
+\end{frame}
+
+
+\begin{frame}[fragile]{Python Local Function}
+\begin{lstlisting}[language=python,style=mini]
+def server_time ():
+    """Returns server time in datetime.datetime class."""
+    ...
+
+# Instance attributes (read-only):
+#
+#     datetime.year
+#         Between MINYEAR and MAXYEAR inclusive.
+#     datetime.month
+#         Between 1 and 12 inclusive.
+#     datetime.day
+#         Between 1 and the number of days in the given month of the given year.
+#     datetime.hour
+#         In range(24).
+#     datetime.minute
+#         In range(60).
+#     datetime.second
+#         In range(60).
+\end{lstlisting}
+    \hfill ... \lstinline{help (datetime.datetime)}
+\end{frame}
+
+
+\begin{frame}[fragile]{C Marshalling}
+    \begin{block}{Textual Stream ?}
+\begin{lstlisting}[language=c,style=mini]
+int sprintf (char *str, const char *format, ...);
+int sscanf (const char *str, const char *format, ...);
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Network Order Binary Stream ?}
+\begin{lstlisting}[language=c,style=mini]
+uint32_t htonl (uint32_t hostlong);
+uint16_t htons (uint16_t hostshort);
+uint32_t ntohl (uint32_t netlong);
+uint16_t ntohs (uint16_t netshort);
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Native Order Binary Stream ?}
+\begin{lstlisting}[language=c,style=mini]
+char buffer [1024];
+int *address = (int *) &buffer [16];
+*address = 1234;
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Java Marshalling}
+    \begin{block}{Serialized Stream ?}
+\begin{lstlisting}[language=java,style=mini]
+output_stream = socket.getOutputStream ();
+object_stream = new ObjectOutputStream (output_stream);
+object_stream.writeInt (1234);
+object_stream.writeObject (...);
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Textual Stream ?}
+\begin{lstlisting}[language=java,style=mini]
+PrintWriter writer = new PrintWriter (output_stream, true);
+writer.println ("...");
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Byte Stream ?}
+\begin{lstlisting}[language=java,style=mini]
+ByteBuffer buffer = ByteBuffer.allocate (4);
+buffer.putInt (1234);
+output_stream.write (buffer.array ());
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Python Marshalling}
+    \begin{block}{Pickled Stream ?}
+\begin{lstlisting}[language=python,style=mini]
+with socket.makefile () as file_object:
+    pickle.dump (..., file_object)
+\end{lstlisting}
+    \end{block}
+    \begin{block}{JSON Stream ?}
+\begin{lstlisting}[language=python,style=mini]
+with socket.makefile () as file_object:
+    json.dump (..., file_object)
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Byte Stream ?}
+\begin{lstlisting}[language=python,style=mini]
+data = 1234;
+socket.send (data.to_bytes (4, 'little'))
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}{Assignment Extension}
+    \begin{block}{Languages}
+        Implement the assignment in at least two programming languages.
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Interoperability}
+        Make sure your clients and servers in both languages \\ are interchangeable:
+        \begin{itemize}
+            \item Run any client with any server.
+            \item Basic fields are enough (YYYY-MM-DD HH:MM:SS).
+            \item Use sensible defaults for other fields (TZ, DOW, DOY).
+        \end{itemize}
+    \end{block}
+\end{frame}

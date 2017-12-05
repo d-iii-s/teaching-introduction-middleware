@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package example;
+
+message AnExampleMessage {
+    uint32 some_integer = 1;
+    sint32 another_integer = 2;
+    string some_string = 8;
+    repeated string some_more_strings = 11;
+}
+
+message MoreExampleMessages {
+    repeated AnExampleMessage messages = 1;
+}
+
+service AnExampleService {
+    rpc CloneMessage (AnExampleMessage) returns (MoreExampleMessages) { }
+}

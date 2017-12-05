@@ -1,0 +1,3 @@
+SERVER_ADDR = 'localhost:8888'
+
+SERVER_THREAD_COUNT = 8

@@ -1,0 +1,392 @@
+\part{Secure Server Access}
+
+
+\section{Technology Overview}
+
+
+\begin{frame}{RSA Refresher}
+    \begin{block}{Public Key Cryptography}
+        A key pair where data encrypted with one key (private or public) \\
+        can be decrypted with the other one (public or private).
+        \begin{itemize}
+            \item Public key available, private key kept secret
+            \item Encrypting with public key, signing with private key
+        \end{itemize}
+    \end{block}
+
+    \bigskip
+
+    $x^{(p-1)(q-1)} = 1 ~ (modulo ~ pq)$ \hfill ... for $p, q$ prime and \\ \hfill $x$ not commensurable with $pq$ \\
+    pick $p$, $q$ \\
+    have $n = pq$ and $\phi = (p-1)(q-1$) \\
+    pick $e$, $d$ such that $ed = 1 ~ (modulo ~ \phi)$ \\
+    then $(m^e)^d = m^{1+k(p-1)(q-1)} = m \cdot m^{k(p-1)(q-1)} = m ~ (all ~ modulo ~ n)$ \\
+
+    \bigskip
+
+    \hfill ... Martin Ouwehand: The (simple) Mathematics of RSA
+\end{frame}
+
+
+\begin{frame}{DH Refresher}
+    \begin{block}{Shared Secret Agreement}
+        A process through which parties can agree on a shared secret \\
+        without actually transmitting the shared secret itself.
+    \end{block}
+
+    \bigskip
+
+    have $p$ and $g$ where $g$ is a generator of multiplicative integer group modulo $p$ \\
+
+    \bigskip
+
+    Alice: pick $a$ and publish $g^a ~ (modulo ~ p)$ \\
+    Bob: pick $b$ and publish $g^b ~ (modulo ~ p)$ \\
+
+    then $(g^a)^b = (g^b)^a$ is a shared secret \\ 
+
+\end{frame}
+
+
+\begin{frame}{TLS Technology Overview}
+    \begin{block}{Goals}
+        Provide privacy and integrity guarantees in network communication.
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Features}
+        \begin{itemize}
+            \item Ciper suite negotiation
+            \begin{itemize}
+                \item Key exchange (RSA, DHE, PSK ...)
+                \item Encryption (AES GCM, AES CCM, AES CBC ...)
+                \item Message authentication (MD5, SHA1, SHA256 ...)
+            \end{itemize}
+            \item Secure session key exchange
+            \item Server authentication
+            \item Data encryption
+            \item Data integrity
+        \end{itemize}
+    \end{block}
+
+    \hfill ... TLS 1.2 RFC 5246
+\end{frame}
+
+
+\begin{frame}[fragile]{TLS RSA Handshake Sketch}
+\begin{lstlisting}[style=mini]
+[CLT] Hello, I support these cipher suites,
+      and here is my CLIENT RANDOM number
+
+[SRV] Hello, I have picked cipher suite AES256-SHA256,
+      here is my SIGNED SERVER CERTIFICATE
+      and here is my SERVER RANDOM number
+
+[CLT] Here is a random PRE MASTER SECRET encrypted with your RSA key
+
+MASTER SECRET = function (PRE MASTER SECRET, CLIENT RANDOM, SERVER RANDOM)
+various session keys = function (MASTER SECRET)
+
+[CLT] Finished and here is encrypted hash of exchanged messages
+
+[SRV] Finished and here is encrypted hash of exchanged messages
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{TLS DH Handshake Sketch}
+\begin{lstlisting}[style=mini]
+[CLT] Hello, I support these cipher suites,
+      and here is my CLIENT RANDOM number
+
+[SRV] Hello, I have picked cipher suite AES256-SHA256,
+      here is my SIGNED SERVER CERTIFICATE
+      and here is my SERVER RANDOM number
+
+[SRV] Here is my signed SERVER DH PUBLIC KEY
+
+[CLT] Here is my CLIENT DH PUBLIC KEY
+
+PRE MASTER SECRET = function (CLIENT DH PUBLIC KEY, SERVER DH PUBLIC KEY)
+MASTER SECRET = function (PRE MASTER SECRET, CLIENT RANDOM, SERVER RANDOM)
+various session keys = function (MASTER SECRET)
+
+[CLT] Finished and here is encrypted hash of exchanged messages
+
+[SRV] Finished and here is encrypted hash of exchanged messages
+\end{lstlisting}
+\end{frame}
+
+
+\section{Assignment Details}
+
+
+\begin{frame}{Assignment}
+    \begin{block}{Server}
+        Implement a server that will provide information on current time.
+        \begin{itemize}
+            \item The server should accept a spec of what fields to return.
+            \item Fields should be standard YYYY-MM-DD HH:MM:SS.
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Client}
+        Implement a client that will query server time:
+        \begin{itemize}
+            \item Pick a random combination of fields.
+            \item Query information on current time.
+            \item Print the time.
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Security}
+        The connection between the client and the server should be encrypted.
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Python Secure Connection Basics}
+    \begin{block}{Server}
+\begin{lstlisting}[language=python,style=mini]
+key_data = open ('server.key', 'rb').read ()
+crt_data = open ('server.crt', 'rb').read ()
+credentials = grpc.ssl_server_credentials ([( key_data, crt_data )])
+
+server = grpc.server (...)
+server.add_secure_port (SERVER_ADDR, credentials)
+\end{lstlisting}
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Client}
+\begin{lstlisting}[language=python,style=mini]
+crt_data = open ('server.crt', 'rb').read ()
+credentials = grpc.ssl_channel_credentials (root_certificates = crt_data)
+channel = grpc.secure_channel (SERVER_ADDR, credentials)
+
+stub = AnExampleServiceStub (channel)
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}{OAuth Technology Overview}
+    \begin{block}{Goals}
+        Standard protocol for granting third party applications \\ limited access to HTTP accessible resources.
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Features}
+        \begin{itemize}
+            \item Considers multiple client types
+            \begin{itemize}
+                \item Applications running in browser
+                \item Server hosted applications acting on own behalf
+                \item Server hosted applications acting on user behalf
+            \end{itemize}
+            \item Heavily uses browser request redirection
+            \item Requires (mostly) encrypted communication
+            \item Authentication represented by (secret) access token
+        \end{itemize}
+    \end{block}
+
+    \bigskip
+
+    \hfill ... OAuth 2.0 RFC 6749
+\end{frame}
+
+
+\begin{frame}{Authorization Process Participants}
+    \begin{block}{Resource Owner}
+        This is the end user who authorizes third party clients to access resources. \\
+        The resource owner accesses the third party client through a browser.
+    \end{block}
+    \begin{block}{Resource Server}
+        This is the server that provides access to resources \\
+        when shown authorization in the form of access token.
+    \end{block}
+    \begin{block}{Third Party Client}
+        This is the application that needs to access \\
+        resources on behalf of resource owner.
+    \end{block}
+    \begin{block}{Authorization Server}
+        This is the server that can authenticate the resource owner \\
+        and issues access tokens as directed by the resource owner.
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Authorization Process Sketch}
+\begin{lstlisting}[style=mini]
+[OWN] Accesses an application link that needs authorization.
+
+[APP] Responds with REDIRECT sending the browser to authorization server.
+      The link includes CLIENT ID and SCOPE and arbitrary STATE.
+
+[OWN] The browser follows the link to the authorization server.
+
+[AUT] The server authenticates the user behind the browser.
+      The user is then asked to grant authorization for SCOPE.
+      The server concludes with REDIRECT back to the application.
+      The link includes AUTHORIZATION CODE and associated application STATE.
+
+[OWN] The browser follows the link to the application.
+
+[APP] The application gets the AUTHORIZATION CODE from the link.
+      The application asks the authorization server to convert
+      the AUTHORIZATION CODE into an ACCESS TOKEN.
+
+[AUT] The server generates the ACCESS TOKEN as requested.
+
+[APP] The application accesses the resource server
+      with the ACCESS TOKEN included in request header.
+\end{lstlisting}
+\end{frame}
+
+
+% Server Applications
+% - Process assumes application can keep access token secret
+% - Steps
+%   - Have user follow link to authorization request page
+%     The link contains
+%     - client ID (assigned previously by administration)
+%     - redirect URI (registered previously with administration)
+%     - expected response type (server applications ask for authorization code)
+%     - scope (what authorization the server wants, application specific)
+%     - state (arbitrary string, application specific)
+%   - The authorization server will authenticate the user and ask for permission
+%     If permission is granted then the authorization request page will
+%     go to redirect URI and provide state and authorization code
+%     and possibly scope if that changed
+%   - The server application asks the authorization server
+%     to exchange the authorization code for
+%     an access token using a POST request
+%     - sends redirect URI and code and client ID
+%     - also sends client secret (secret, assigned previously by administration)
+%     - gets back access token with expiration time and possibly refresh token
+% - Notable
+%   - The access token never passes through the browser
+
+% Browser Applications
+% - Run in a browser so cannot have client secret in code
+% - Same as previous except last step
+%   - Client secret is not sent
+%   - Not clear why this is fine
+%   - This is not the spec way
+%     - Spec provides simplified implicit grant handshake
+%     - Spec points out the client is not really authenticated
+
+% Finally
+% - The access token is simply inserted to HTTP request headers
+%   - This is called bearer token
+%   - Other types also possible
+
+% Tidbits
+% - Standard actually allows significant variability
+% - TLS connections are required (almost) everywhere
+% - If somebody steals access token they can use it elsewhere
+% - The authorization server can also issue refresh token, which
+%   can be used to obtain another access token once the current one expires
+
+
+\begin{frame}{Google Cloud Platform Technology Overview}
+    \begin{block}{Goals}
+        Computing platform build on Google infrastructure resources and services.
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Features}
+        \begin{itemize}
+            \item Tons of services
+            \begin{itemize}
+                \item Compute services (IaaS and PaaS and FaaS)
+                \item Storage services (SQL, tables, documents, raw block storage)
+                \item Networking (private networks, load balancing, content delivery)
+                \item Big data processing
+                \item Machine learning
+                \item Management
+            \end{itemize}
+            \item Accessible through public interfaces
+            \item Libraries for multiple languages
+        \end{itemize}
+    \end{block}
+
+    \bigskip
+
+    \hfill ... \url{http://cloud.google.com}
+\end{frame}
+
+
+\begin{frame}[fragile]{Installation}
+    \begin{block}{Browser}
+        \begin{itemize}
+            \item Register for free trial at \url{http://cloud.google.com}
+            \item Log in to console at \url{http://console.cloud.google.com}
+            \item Create a new project
+            \item Enable required libraries
+            \item Create and download a service account key
+        \end{itemize}
+    \end{block}
+    \begin{block}{Shell}
+\begin{lstlisting}[language=bash,style=mini]
+> export GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account-key.json
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Cloud Speech API}
+\begin{lstlisting}[language=python,style=mini]
+from google.cloud import speech as google_cloud_speech
+from google.cloud.speech import enums as google_cloud_speech_enums
+from google.cloud.speech import types as google_cloud_speech_types
+
+client = google_cloud_speech.SpeechClient ()
+
+content = read_data_from_file (...)
+audio = google_cloud_speech_types.RecognitionAudio (content = content)
+config = google_cloud_speech_types.RecognitionConfig (language_code = 'en-US')
+
+result = client.recognize (config, audio)
+\end{lstlisting}
+    \bigskip
+    \hfill ... \url{http://cloud.google.com/speech/docs}
+\end{frame}
+
+
+\begin{frame}[fragile]{Cloud Translate API}
+\begin{lstlisting}[language=python,style=mini]
+from google.cloud import translate as google_cloud_translate
+
+client = google_cloud_translate.Client ()
+
+# Get a list of all supported languages.
+languages = client.get_languages ()
+
+# Translate a sentence.
+result = client.translate ('some text', target_language = 'en')
+\end{lstlisting}
+    \bigskip
+    \hfill ... \url{http://cloud.google.com/translate/docs}
+\end{frame}
+
+
+\begin{frame}{Assignment}
+    \begin{block}{Goal}
+        Create a client that translates input speech.
+        \begin{itemize}
+            \item An audio file with speech in English on input
+            \item A text with speech translated into Czech on output
+        \end{itemize}
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Implementation}
+        Use the client libraries rather than generated stub code.
+    \end{block}
+\end{frame}

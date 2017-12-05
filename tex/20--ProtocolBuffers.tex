@@ -1,0 +1,436 @@
+\part{Protocol Buffer Basics}
+
+
+\section{Technology Overview}
+
+
+\begin{frame}{Technology Overview}
+    \begin{block}{Goals}
+        Provide platform independent structured data serialization framework.
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Features}
+        \begin{itemize}
+            \item Platform independent data description language.
+            \item Serialization code generation for multiple languages \\
+                  (C++, Java, Python, Go, Ruby, JavaScript, Objective C, C\# ...).
+            \item Binary transport format with compact data representation.
+        \end{itemize}
+    \end{block}
+
+    \bigskip
+
+    \hfill ... \url{http://developers.google.com/protocol-buffers}
+\end{frame}
+
+
+\begin{frame}[fragile]{Installation}
+    \begin{block}{Fedora Packages}
+\begin{lstlisting}[language=bash,style=mini]
+> dnf install protobuf-devel
+> dnf install python3-protobuf
+\end{lstlisting}
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Source Distribution}
+\begin{lstlisting}[language=bash,style=mini]
+> git clone -b 3.4.x http://github.com/google/protobuf
+> cd protobuf
+> ./autogen.sh
+> ./configure --prefix=${HOME}/.local
+> make -j 8
+> make install
+> export PATH=${HOME}/.local/bin:${PATH}
+> export LD_LIBRARY_PATH=${HOME}/.local/lib:${LD_LIBRARY_PATH}
+> export PKG_CONFIG_PATH=${HOME}/.local/lib/pkgconfig:${PKG_CONFIG_PATH}
+\end{lstlisting}
+    \end{block}
+
+    \bigskip
+
+    \hfill ... use supplied install-protobuf.sh script
+\end{frame}
+
+
+\begin{frame}{Version Summary}
+    \begin{columns}[b]
+        \begin{column}{.3\textwidth}
+            Fields \\
+            Default values \\
+            Missing values \\
+            Unknown fields \\
+            Message extensions \\
+            Encoding \\
+            \vspace{4pt}
+        \end{column}
+        \begin{column}{.3\textwidth}
+            \begin{block}{proto2}
+                required and optional \\
+                custom values \\
+                indicated \\
+                preserved \\
+                extension fields \\
+                binary \\
+            \end{block}
+        \end{column}
+        \begin{column}{.3\textwidth}
+            \begin{block}{proto3}
+                optional \\
+                zero or null \\
+                same as default \\
+                discarded \\
+                any type fields \\
+                binary and JSON \\
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]{Message Specification Example}
+\begin{lstlisting}[style=mini]
+syntax = "proto3";
+
+package example;
+
+message AnExampleMessage {
+    uint32 some_integer = 1;
+    sint32 another_integer = 2;
+    string some_string = 8;
+    repeated string some_more_strings = 11;
+}
+
+message MoreExampleMessages {
+    repeated AnExampleMessage messages = 1;
+}
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{Primitive Field Types}
+    \begin{block}{Integer Types}
+        \begin{description}[123456789012345]
+            \item[(s)fixed(32|64)] Integers with fixed length encoding.
+            \item[(u)int(32|64)] Integers with variable length encoding.
+            \item[sint(32|64)] Integers with sign optimized variable length encoding.
+        \end{description}
+    \end{block}
+    \begin{block}{Floating Point Types}
+        \begin{description}[123456789012345]
+            \item[float] IEEE 754 32 bit float.
+            \item[double] IEEE 754 64 bit float.
+        \end{description}
+    \end{block}
+    \begin{block}{Additional Primitive Types}
+        \begin{description}[123456789012345]
+            \item[bool] Boolean.
+            \item[bytes] Arbitrary sequence of bytes.
+            \item[string] Arbitrary sequence of UTF-8 characters.
+        \end{description}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{More Field Types}
+    \begin{block}{Oneof Type}
+\begin{lstlisting}[style=mini]
+message AnExampleMessage {
+    oneof some_oneof_field {
+        int32 some_integer = 1;
+        string some_string = 2;
+    }
+}
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Enum Type}
+\begin{lstlisting}[style=mini]
+enum AnEnum {
+    INITIAL = 0;
+    RED = 1;
+    BLUE = 2;
+    GREEN = 3;
+    WHATEVER = 8;
+}
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{More Field Types}
+    \begin{block}{Any Type}
+\begin{lstlisting}[style=mini]
+import "google/protobuf/any.proto";
+message AnExampleMessage {
+    repeated google.protobuf.Any whatever = 8;
+}
+\end{lstlisting}
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Map Type}
+\begin{lstlisting}[style=mini]
+message AnExampleMessage {
+    map<int32, string> keywords = 8;
+}
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\section{Assignment Details}
+
+
+\begin{frame}{Assignment}
+    \begin{block}{Server}
+        Implement a server that will provide information on current time.
+        \begin{itemize}
+            \item The server should accept a spec of what fields to return.
+            \item Fields should be standard YYYY-MM-DD HH:MM:SS.
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Client}
+        Implement a client that will query server time:
+        \begin{itemize}
+            \item Pick a random combination of fields.
+            \item Query information on current time.
+            \item Print the time.
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Interoperability}
+        Implement compatible clients and servers in two languages.
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{C++ Message Basics}
+    \begin{block}{Construction}
+\begin{lstlisting}[language=c,style=mini]
+AnExampleMessage message;
+AnExampleMessage message (another_message);
+message.CopyFrom (another_message);
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Singular Fields}
+\begin{lstlisting}[language=c,style=mini]
+cout << message.some_integer ();
+message.set_some_integer (1234);
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Repeated Fields}
+\begin{lstlisting}[language=c,style=mini]
+int size = messages.messages_size ();
+const AnExampleMessage &message = messages.messages (1234);
+AnExampleMessage *message = messages.mutable_messages (1234);
+AnExampleMessage *message = messages.add_messages ();
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{C++ Message Serialization}
+    \begin{block}{Byte Array}
+\begin{lstlisting}[language=c,style=mini]
+char buffer [BUFFER_SIZE];
+message.SerializeToArray (buffer, sizeof (buffer));
+message.ParseFromArray (buffer, sizeof (buffer));
+\end{lstlisting}
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Standard Stream}
+\begin{lstlisting}[language=c,style=mini]
+message.SerializeToOstream (&stream);
+message.ParseFromIstream (&stream);
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Java Message Basics}
+    \begin{block}{Construction}
+\begin{lstlisting}[language=java,style=mini]
+AnExampleMessage.Builder messageBuilder;
+messageBuilder = AnExampleMessage.newBuilder ();
+messageBuilder = AnExampleMessage.newBuilder (another_message);
+AnExampleMessage message = messageBulder.build ();
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Singular Fields}
+\begin{lstlisting}[language=java,style=mini]
+System.out.println (message.getSomeInteger ());
+messageBuilder.setSomeInteger (1234);
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Repeated Fields}
+\begin{lstlisting}[language=java,style=mini]
+int size = messages.getMessagesCount ();
+AnExampleMessage message = messages.getMessages (1234);
+List<AnExampleMessage> messageList = messages.getMessagesList ();
+messages.addMessages (messageBuilder);
+messages.addMessages (message);
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Java Message Serialization}
+    \begin{block}{Byte Array}
+\begin{lstlisting}[language=java,style=mini]
+byte [] buffer = message.toByteArray ();
+try {
+    AnExampleMessage message = AnExampleMessage.parseFrom (buffer);
+} catch (InvalidProtocolBufferException e) {
+    System.out.println (e);
+}
+\end{lstlisting}
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Standard Stream}
+\begin{lstlisting}[language=java,style=mini]
+message.writeTo (stream);
+AnExampleMessage message = AnExampleMessage.parseFrom (stream);
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Python Message Basics}
+    \begin{block}{Construction}
+\begin{lstlisting}[language=python,style=mini]
+message = AnExampleMessage ()
+message.CopyFrom (another_message)
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Singular Fields}
+\begin{lstlisting}[language=python,style=mini]
+print (message.some_integer)
+message.some_integer = 1234
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Repeated Fields}
+\begin{lstlisting}[language=python,style=mini]
+size = len (messages.messages)
+message = messages.messages [1234]
+message = messages.messages.add ()
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Python Message Serialization}
+    \begin{block}{Byte Array}
+\begin{lstlisting}[language=python,style=mini]
+buffer = message.SerializeToString ()
+message.ParseFromString (buffer)
+message = AnExampleMessage.FromString (buffer)
+\end{lstlisting}
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Standard Stream}
+\begin{lstlisting}[language=python,style=mini]
+file.write (message.SerializeToString ())
+message.ParseFromString (file.read ())
+AnExampleMessage.FromString (file.read ())
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\section{Encoding Overview}
+
+
+\begin{frame}{Message Encoding}
+    \begin{block}{Goals}
+        Compact structure with support for field removal and addition.
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Features}
+        \begin{itemize}
+            \item Sequence of field key value pairs.
+            \item Key is field index and type indication.
+                \begin{itemize}
+                    \item One of variable integer, explicit length, fixed length.
+                    \item Not enough to tell the exact field type !
+                \end{itemize}
+            \item Primitive repeated fields packed.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}{Variable Length Encoding}
+    \begin{block}{Goals}
+        Support integers clustered around zero more efficiently.
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Features}
+        \begin{itemize}
+            \item Integer stored as variable number of 7 bit values.
+            \item High bit set to zero for last byte.
+            \item Little endian byte order.
+            \item Signed variant.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}{Assignment Extension}
+    \begin{block}{Performance}
+        Measure the performance of your implementation.
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Experiment Design}
+        Stick to the following, or provide arguments for why not:
+        \begin{itemize}
+            \item Random field mix, each field with probability 1/2.
+            \item Measure at least two minutes long traffic.
+            \item Report average invocation throughput.
+            \item No printing during measurement.
+            \item Compare with first assignment.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Measuring Time}
+    \begin{block}{C++}
+\begin{lstlisting}[language=c,style=mini]
+#include <time.h>
+#include <stdint.h>
+struct timespec time;
+clock_gettime (CLOCK_MONOTONIC_RAW, &time);
+uint64_t nanoseconds =
+    (uint64_t) time.tv_sec * 1000000000 +
+    (uint64_t) time.tv_nsec;
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Java}
+\begin{lstlisting}[language=java,style=mini]
+long nanoseconds = System.nanoTime ();
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Python}
+\begin{lstlisting}[language=python,style=mini]
+import time
+nanoseconds = time.clock_gettime (time.CLOCK_MONOTONIC_RAW) * 1000000000
+\end{lstlisting}
+    \end{block}
+\end{frame}

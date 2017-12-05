@@ -1,0 +1,8 @@
+*.o
+*.dep
+client
+server
+example.pb.h
+example.pb.cc
+example.grpc.pb.h
+example.grpc.pb.cc

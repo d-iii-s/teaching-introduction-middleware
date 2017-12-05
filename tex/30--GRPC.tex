@@ -1,0 +1,240 @@
+\part{gRPC Based Server}
+
+
+\section{Technology Overview}
+
+
+\begin{frame}{Technology Overview}
+    \begin{block}{Goals}
+        Provide platform independent remote procedure call mechanism.
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Features}
+        \begin{itemize}
+            \item Protocol buffers as interface description language.
+            \item Stub code generation for multiple languages \\
+                  (C++, Java, Python, Go, Ruby, JavaScript, PHP, C\# ...).
+            \item Binary transport format with compact data representation.
+            \item Supports streaming arguments during remote call.
+            \item Synchronous and asynchronous invocation code.
+            \item Compression support at transport level.
+            \item Security support at transport level.
+        \end{itemize}
+    \end{block}
+
+    \bigskip
+
+    \hfill ... \url{http://www.grpc.io}
+\end{frame}
+
+
+\begin{frame}[fragile]{Installation}
+    \begin{block}{Source Distribution}
+\begin{lstlisting}[language=bash,style=mini]
+> git clone -b v1.7.x http://github.com/grpc/grpc
+> cd grpc
+> git submodule update --init
+> make -j 8 prefix=${HOME}/.local
+> make install
+> export PATH=${HOME}/.local/bin:${PATH}
+> export LD_LIBRARY_PATH=${HOME}/.local/lib:${LD_LIBRARY_PATH}
+> export PKG_CONFIG_PATH=${HOME}/.local/lib/pkgconfig:${PKG_CONFIG_PATH}
+\end{lstlisting}
+    \end{block}
+
+    \bigskip
+
+    \hfill ... use supplied install-grpc.sh script
+\end{frame}
+
+
+\begin{frame}[fragile]{Service Specification Example}
+\begin{lstlisting}[style=mini]
+syntax = "proto3";
+
+message AnExampleRequest { ... }
+message AnExampleResponse { ... }
+
+service AnExampleService {
+
+    rpc OneToOneCall (AnExampleRequest) returns (AnExampleResponse) { }
+
+    rpc OneToStreamCall (AnExampleRequest)
+        returns (stream AnExampleResponse) { }
+
+    rpc StreamToStreamCall (stream AnExampleRequest)
+        returns (stream AnExampleResponse) { }
+}
+\end{lstlisting}
+\end{frame}
+
+
+\section{Assignment Details}
+
+
+\begin{frame}{Assignment}
+    \begin{block}{Server}
+        Implement a server that will provide information on current time.
+        \begin{itemize}
+            \item The server should accept a spec of what fields to return.
+            \item Fields should be standard YYYY-MM-DD HH:MM:SS.
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Client}
+        Implement a client that will query server time:
+        \begin{itemize}
+            \item Pick a random combination of fields.
+            \item Query information on current time.
+            \item Print the time.
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Interoperability}
+        Implement compatible clients and servers in two languages.
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{C++ Service Basics}
+    \begin{block}{Implementation}
+\begin{lstlisting}[language=c,style=mini]
+class MyService : public AnExampleService::Service {
+    grpc.Status OneToOne (grpc.ServerContext *context,
+        const AnExampleRequest *request, AnExampleResponse *response) {
+        // Method implementation goes here ...
+        return (grpc.Status::OK);
+    }
+    ...
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Execution}
+\begin{lstlisting}[language=c,style=mini]
+MyService service;
+grpc.ServerBuilder builder;
+builder.AddListeningPort ("localhost:8888", grpc.InsecureServerCredentials ());
+builder.RegisterService (&service);
+std::unique_ptr<grpc.Server> server (builder.BuildAndStart ());
+
+server->Wait ();
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{C++ Client Basics}
+    \begin{block}{Connection}
+\begin{lstlisting}[language=c,style=mini]
+std::shared_ptr<grpc.Channel> channel = grpc.CreateChannel (
+    "localhost:8888", grpc.InsecureChannelCredentials ());
+\end{lstlisting}
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Invocation}
+\begin{lstlisting}[language=c,style=mini]
+grpc.ClientContext context;
+AnExampleResponse response;
+std::shared_ptr<AnExampleService::Stub> stub = AnExampleService::NewStub (channel);
+grpc.Status status = stub->OneToOne (&context, request, &response);
+if (status.ok ()) {
+    // Response available here ...
+}
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Java Service Basics}
+    \begin{block}{Implementation}
+\begin{lstlisting}[language=java,style=mini]
+class MyService extends AnExampleServiceGrpc.AnExampleServiceImplBase {
+    @Override public void OneToOne (
+        AnExampleRequest request,
+        io.grpc.stub.StreamObserver<AnExampleResponse> responseObserver) {
+        // Method implementation goes here ...
+        responseObserver.onNext (response);
+        responseObserver.onCompleted ();
+    }
+    ...
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Execution}
+\begin{lstlisting}[language=java,style=mini]
+io.grpc.Server server = io.grpc.ServerBuilder
+    .forPort (8888).addService (new MyService ()).build ().start ();
+
+server.awaitTermination ();
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Java Client Basics}
+    \begin{block}{Connection}
+\begin{lstlisting}[language=java,style=mini]
+io.grpc.ManagedChannel channel = io.grpc.ManagedChannelBuilder
+    .forAddress ("localhost", 8888)
+    .usePlaintext (true)
+    .build ();
+\end{lstlisting}
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Invocation}
+\begin{lstlisting}[language=java,style=mini]
+AnExampleServiceGrpc.AnExampleServiceBlockingStub stub =
+    AnExampleServiceGrpc.newBlockingStub (channel);
+AnExampleResponse response = stub.oneToOne (request);
+// Response available here ...
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Python Service Basics}
+    \begin{block}{Implementation}
+\begin{lstlisting}[language=python,style=mini]
+class MyServicer (AnExampleServiceServicer):
+    def OneToOne (self, request, context):
+        # Method implementation goes here ...
+        return response
+\end{lstlisting}
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Execution}
+\begin{lstlisting}[language=python,style=mini]
+server = grpc.server (
+    futures.ThreadPoolExecutor (
+        max_workers = SERVER_THREAD_COUNT))
+add_AnExampleServiceServicer_to_server (MyServicer (), server)
+server.add_insecure_port ("localhost:8888")
+server.start ()
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Python Client Basics}
+    \begin{block}{Connection}
+\begin{lstlisting}[language=python,style=mini]
+channel = grpc.insecure_channel ("localhost:8888")
+\end{lstlisting}
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Invocation}
+\begin{lstlisting}[language=python,style=mini]
+stub = AnExampleServiceStub (channel)
+response = stub.OneToOne (request)
+# Response available here ...
+\end{lstlisting}
+    \end{block}
+\end{frame}

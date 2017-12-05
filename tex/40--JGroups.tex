@@ -1,0 +1,170 @@
+\part{JGroups Based Peer}
+
+
+\section{Technology Overview}
+
+
+\begin{frame}{Technology Overview}
+    \begin{block}{Goals}
+        Provide reliable group messaging mechanism.
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Features}
+        \begin{itemize}
+            \item Basic group messaging interface.
+            \item Groups identified by names.
+            \item Messages are byte arrays.
+            \item Configurable protocol stack.
+            \begin{itemize}
+                \item Multiple underlying transports.
+                \item Multiple reliability mechanisms.
+                \item Multiple membership discovery mechanisms.
+                \item Multiple error recovery mechanisms.
+                \item ...
+            \end{itemize}
+        \end{itemize}
+    \end{block}
+
+    \bigskip
+
+    \hfill ... \url{http://www.jgroups.org}
+\end{frame}
+
+
+\begin{frame}[fragile]{JChannel Class}
+\begin{lstlisting}[language=java,style=mini]
+public class JChannel implements Closeable {
+    public JChannel ();
+    public JChannel (File file);
+    public JChannel (URL properties);
+    public JChannel (Element properties);
+
+    public void connect (String cluster_name);
+    public void disconnect ();
+
+    public void send (Message msg);
+    public void send (Address dst, byte [] buf);
+    public void send (Address dst, Object obj);
+
+    public void setReceiver (Receiver r);
+    public Receiver getReceiver ();
+
+    public View getView ();
+
+    public void addChannelListener (ChannelListener listener);
+    public void removeChannelListener (ChannelListener listener);
+
+    ...
+}
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{Message Class}
+\begin{lstlisting}[language=java,style=mini]
+public class Message ... {
+    public Message (Address dest);
+    public Message (Address dest, byte [] buf);
+    public Message (Address dest, Object obj);
+
+    public Address getDest ();
+    public Message setDest (Address new_dest);
+    public Address getSrc ();
+    public Message setSrc (Address new_src);
+
+    public int getOffset ();
+    public int getLength ();
+    public byte [] getBuffer ();
+    public Message setBuffer (byte[] b);
+    public Message setBuffer (byte[] b, int offset, int length);
+
+    ...
+}
+\end{lstlisting}
+\end{frame}
+
+
+\section{Assignment Details}
+
+
+\begin{frame}[fragile]{Assignment}
+    \begin{block}{Peer}
+        Implement a process that will update shared hash map.
+        \begin{itemize}
+            \item The shared hash map is available through \lstinline{SharedHashMap} channel.
+            \item The updates are transmitted through \lstinline{UpdateEvent} class.
+        \end{itemize}
+    \end{block}
+
+\begin{lstlisting}[language=java,style=mini]
+import java.io.Serializable;
+
+public class UpdateEvent implements Serializable {
+    private static final long serialVersionUID = 0xBAADBAADBAADL;
+
+    public int key;
+    public String value;
+}
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{ReceiverAdapter Class}
+\begin{lstlisting}[language=java,style=mini]
+public class ReceiverAdapter implements Receiver {
+    public void receive (Message msg);
+    public void receive (MessageBatch batch);
+
+    public void block ();
+    public void unblock ();
+
+    public void getState (OutputStream output);
+    public void setState (InputStream input);
+
+    public void suspect (Address mbr);
+    public void viewAccepted (View view);
+}
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{ChannelListener Interface}
+\begin{lstlisting}[language=java,style=mini]
+public interface ChannelListener {
+    public void channelClosed (JChannel channel);
+    public void channelConnected (JChannel channel);
+    public void channelDisconnected (JChannel channel);
+}
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{Assignment Extension}
+    \begin{block}{Peer}
+        Implement a process that will track shared hash map state.
+        \begin{itemize}
+            \item The shared hash map is available through \lstinline{SharedHashMap} channel.
+            \item The updates are transmitted through \lstinline{UpdateEvent} class.
+        \end{itemize}
+    \end{block}
+
+\begin{lstlisting}[language=java,style=mini]
+import java.io.Serializable;
+
+public class UpdateEvent implements Serializable {
+    private static final long serialVersionUID = 0xBAADBAADBAADL;
+
+    public int key;
+    public String value;
+}
+\end{lstlisting}
+
+    \begin{block}{Quiz}
+        \begin{itemize}
+            \item How would you go about measuring the cluster throughput~?
+            \item Will the entire cluster see the same state~?
+        \end{itemize}
+    \end{block}
+\end{frame}
