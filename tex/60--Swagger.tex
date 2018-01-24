@@ -1,0 +1,527 @@
+\part{Swagger: REST API Generation}
+
+
+\section{Technology Overview}
+
+
+\begin{frame}{REST: Representational State Transfer}
+    \begin{block}{Features}
+        REST compliant web services allow requesting systems to access
+        and manipulate textual representations of web resources using
+        a uniform and predefined set of stateless operations.
+
+        \hfill ... Wikipedia
+    \end{block}
+
+    \bigskip
+
+    Practically: each object (for example each database record) has its own URL
+    and each action on the object a specific method or a specific child URL.
+
+    \medskip
+
+    \begin{itemize}
+        \item Add new person with POST at \url{http://example.com/person/add}
+        \item Get person info with GET at \url{http://example.com/person/42}
+        \item Update person info with POST at \url{http://example.com/person/42}
+        \item Delete person info with DELETE at \url{http://example.com/person/42}
+    \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{REST: Motivation}
+    \begin{block}{Motivation}
+        Strike balance between \\ need for \emph{explicit interfaces} \\ and need for \emph{loose coupling}.
+    \end{block}
+
+    \medskip
+
+    \begin{itemize}
+        \item Standard communication protocol (HTTP)
+        \begin{itemize}
+            \item Already defines CRUD operations
+            \item Provides security and reliability
+            \item Is easy to deploy across internet
+        \end{itemize}
+        \item Encourages separating model from view
+        \item Supports independent implementation technology \\ between client and server
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{REST and CRUD}
+    \begin{block}{CRUD}
+        \begin{description}
+             \item[Create] to create an object
+             \item[Read] to query object attributes
+             \item[Update] to update object attributes
+             \item[Delete] to delete an object
+        \end{description}
+    \end{block}
+
+    \medskip
+
+    \begin{itemize}
+        \item The recommended minimum set of operations
+        \item Corresponds reasonably well to HTTP methods
+        \item Anything beyond CRUD is not considered pure REST
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]{REST: Data Transfer}
+
+    Data exchange format is application specific but there are obvious choices
+    \begin{itemize}
+        \item JSON because of JavaScript in the browser
+        \item XML because of existing library support
+    \end{itemize}
+
+\begin{lstlisting}[language=json,style=mini]
+{
+    "name": "Jane Doe",
+    "email":  "jane.doe@example.com",
+    "url": [
+        "http://example.com/~jane.doe",
+        "http://example.com/people/jane.doe"
+    ],
+    "address": {
+        "street1": "Our Street One",
+        "street2": "Street Line Two",
+        "city": "The City",
+        "postal": "12345"
+    },
+    "room": 123
+}
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}{Swagger: API Development for REST}
+    \begin{block}{Interface Description}
+        \begin{description}
+            \item[URLs] to identify data model classes
+            \item[Actions] to operate on class instances
+            \item[Attributes] with types to describe class instances
+            \item[Security] defines access rules
+            \item[Comments] provide human readable description
+        \end{description}
+    \end{block}
+
+    \medskip
+
+    \begin{itemize}
+        \item Code generation
+        \begin{itemize}
+            \item Stubs wrap communication in language or framework specific constructs
+            \item RPC style with futures for client
+            \item Callback style for server
+            \item Over 80 targets supported
+        \end{itemize}
+        \item Editor at \url{http://editor.swagger.io}.
+    \end{itemize}
+\end{frame}
+
+
+\section{Assignment Details}
+
+
+\begin{frame}{Assignment}
+    \begin{block}{Inventory Application}
+        Keeps track of \emph{users} and \emph{assets}. \\
+        Basic user related operations are already defined. \\
+        Define similar operations for assets and implement everything.
+    \end{block}
+
+    \begin{itemize}
+        \item Interface
+        \begin{itemize}
+            \item Elementary CRUD operations for assets
+            \item One to many relationship between users and assets
+        \end{itemize}
+        \item Server
+        \begin{itemize}
+            \item Python implementation using Flask, or
+            \item Java implementation using Spring
+        \end{itemize}
+        \item Client
+        \begin{itemize}
+            \item TypeScript implementation using Angular, or
+            \item R and bash helper scripts
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]{Assignment Interface: Prologue}
+\begin{lstlisting}[language=swagger,style=mini]
+swagger: 2.0
+
+info:
+  description: Inventory database service
+  version: 1.0.0
+  title: Inventory
+  termsOfService: ""
+  license:
+    name: Apache 2.0
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+
+host: localhost:8080
+
+basePath: /v1
+
+schemes:
+  - http
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{Assignment Interface: Listing Users}
+\begin{lstlisting}[language=swagger,style=mini]
+paths:
+  /users:
+    get:
+      operationId: readUsers
+      produces:
+        - "application/json"
+      responses:
+        200:
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserBase"
+
+definitions:
+  UserBase:
+    type: object
+    properties:
+      id:
+        type: integer
+      firstname:
+        type: string
+      lastname:
+        type: string
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{Assignment Interface: Querying User Data}
+\begin{lstlisting}[language=swagger,style=mini]
+  /user/{id}:
+    get:
+      summary: Query user information.
+      operationId: readUser
+      parameters:
+        - in: path
+          name: id
+          description: ID of the user.
+          required: true
+          type: integer
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: object
+            $ref: "#/definitions/User"
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{Assignment Interface: Updating User Data}
+\begin{lstlisting}[language=swagger,style=mini]
+    post:
+      summary: Update user information.
+      operationId: updateUser
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: path
+          name: id
+          description: ID of the user.
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: Updated data.
+          required: true
+          schema:
+            $ref: "#/definitions/User"
+      responses:
+        405:
+          description: Invalid input
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{Assignment Interface: Inheritance}
+\begin{lstlisting}[language=swagger,style=mini]
+definitions:
+  UserBase:
+    type: object
+    properties:
+      id:
+        type: integer
+      firstname:
+        type: string
+      lastname:
+        type: string
+      email:
+        type: string
+  User:
+    allOf:
+      - $ref: "#/definitions/UserBase"
+      - type: object
+        properties:
+          homepage:
+            type: string
+          department:
+            type: string
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{Code Generation}
+\begin{lstlisting}[language=bash,style=mini]
+> swagger-codegen generate -i api.yaml -o <path> -l <framework>
+\end{lstlisting}
+
+    \begin{block}{Assignment}
+        Use scripts \lstinline{build-\{server,client\}-*.sh} \\
+        after updating \lstinline{api.yaml} to invoke code generator.
+    \end{block}
+\end{frame}
+
+
+\begin{frame}{Flask-Based and Spring-Based Servers}
+    \begin{block}{General}
+        \begin{itemize}
+            \item No real database (data kept in memory)
+            \item Data dump to JSON at termination for debugging
+            \item See \lstinline{README} for instructions how to run
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Flask-Based Server}
+\begin{block}{\lstinline{swagger\_server/controllers/default\_controller.py}}
+\begin{lstlisting}[language=python,style=mini]
+def create_user(body):  # noqa: E501
+    """Creates a new user.
+
+    :param body: User to be added.
+    :type body: dict | bytes
+
+    :rtype: None
+    """
+    if connexion.request.is_json:
+        body = User.from_dict(connexion.request.get_json())
+    return 'do some magic!'
+\end{lstlisting}
+\end{block}
+
+    \begin{block}{\lstinline{controllers/users.py}}
+        Actual implementation with data kept in memory.
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Spring-Based Server}
+    \begin{block}{\lstinline{src/gen/java/io/swagger/api/UsersApiController.java}}
+\begin{lstlisting}[language=java,style=mini]
+public ResponseEntity<Void> createUser (
+    @ApiParam (value = "User to be added." ,required=true)
+    @Valid
+    @RequestBody
+    User body)
+{
+    String accept = request.getHeader("Accept");
+    return new ResponseEntity<Void> (HttpStatus.NOT_IMPLEMENTED);
+}
+\end{lstlisting}
+    \end{block}
+
+    \begin{block}{\lstinline{src/main/java/io/swagger/api/UsersApiController.java}}
+        Actual implementation with data kept in memory.
+    \end{block}
+\end{frame}
+
+
+\begin{frame}{Angular-Based Client}
+    \begin{block}{Goal}
+        Add interface components for listing complete inventory. \\ Extend user detail page with asset list.
+    \end{block}
+
+    \begin{block}{General}
+        \begin{itemize}
+            \item Sources are under \lstinline{src/app}
+            \item \lstinline{*.component.html} contains web page snippets of the component
+            \item \lstinline{*.component.ts} contains TypeScript implementation of the component
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}{Angular-Based Client}
+    \begin{block}{\lstinline{app-routing.module.ts}}
+        \begin{itemize}
+            \item Import all your components
+            \item Add new routes to \lstinline{routes}
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{\lstinline{app.component.html}}
+        \begin{itemize}
+            \item Items in the topbar
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Angular-Based Client: Reading Server Data}
+    \begin{block}{\lstinline{users/users.component.ts}}
+\begin{lstlisting}[language=typescript,style=mini]
+export class UsersComponent implements OnInit {
+    users: User [];
+
+    constructor (private api: DefaultService) {}
+
+    ngOnInit () {
+        this.api.readUsers ().subscribe (u => this.users = u);
+    }
+}
+\end{lstlisting}
+    \end{block}
+
+    \begin{block}{\lstinline{users/users.component.html}}
+\begin{lstlisting}[language=html,style=mini]
+<ul>
+    <li *ngFor="let user of users">
+        <a routerLink="/user/{{user.id}}">{{user.lastname}}, {{user.firstname}}</a>
+    </li>
+</ul>
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Angular-Based Application: Writing Server Data}
+    \begin{block}{\lstinline{users/user.component.html}}
+\begin{lstlisting}[language=html,style=mini]
+<form (ngSubmit)="save();">
+    <label for="user-first-name">First name:</label>
+    <input [(ngModel)]="user.firstname" id="user-first-name" />
+    ...
+    <button type="submit">Save</button>
+</form>
+\end{lstlisting}
+    \end{block}
+
+    \begin{block}{\lstinline{users/user.component.ts}}
+\begin{lstlisting}[language=typescript,style=mini]
+export class UserComponent {
+    save (): void {
+        const id = +this.route.snapshot.paramMap.get ('id');
+        this.api.updateUser (id, this.user).subscribe ();
+    }
+}
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Bash Client: Overview}
+    \begin{block}{Generated}
+        The generated script \lstinline{client.sh} is a thin wrapper on top of \lstinline{curl} doing the actual requests. Useful to check that the server works as expected.
+    \end{block}
+
+    \begin{block}{\lstinline{make-check-lists} and \lstinline{add-employees.sh}}
+
+        Downloads list of employees, creates printable version of the inventory.
+
+        Reads employee list from a CSV, adds them to the database.
+    \end{block}
+
+    \begin{block}{Task}
+        Extend the \lstinline{make-check-lists} to include assets listing and create a similar script for adding assets.
+
+\begin{lstlisting}
+asset,price,acquired,owner
+Magic Wand,42,2017,harry.potter@example.com
+...
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Bash Client: Usage}
+\begin{lstlisting}[language=bash]
+> ./client.sh --silent readUsers | json_reformat
+
+> ./client.sh --silent readUser id=1
+
+> ./client.sh createUser \
+    firstname==Horatio lastname==Hornblower \
+    email==horatio.hornblower@royalnavy.mod.uk \
+    department==Navy \
+    homepage==https://www.royalnavy.mod.uk/hornblower
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{R Client: Overview}
+    \begin{block}{\lstinline{dept-plot.r}}
+        Draws a barplot showing number of employees in each department.
+    \end{block}
+
+    \begin{block}{Task}
+        Create a similar script that will show total price of
+        assets across departments and for each employee.
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{\lstinline{dept-plot.r}}
+\begin{lstlisting}[language=r,style=mini]
+source ("init.r")
+
+api <- DefaultApi$new ()
+
+all.users.id <- api$read_users ()$content$id
+
+department.people.count <- list ()
+
+for (i in all.users.id) {
+    u <- api$read_user (i)$content
+    dept <- u$department
+    if (!(dept %in% names (department.people.count))) {
+        department.people.count [[ dept ]] <- 0
+    }
+
+    department.people.count [[ dept ]] <- department.people.count [[ dept ]] + 1
+}
+
+barplot (unlist (department.people.count), main="Employee count per department")
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}{Assignment Summary}
+    \begin{itemize}
+        \item Extend \lstinline{api.yaml} with assets-related operations and data definitions
+        \item Extend one of the servers (Flask or Spring)
+            \begin{itemize}
+                \item Implement all CRUD operations and listing (all and per-user)
+            \end{itemize}
+        \item Extend one of the clients (Angular or R and bash)
+            \begin{itemize}
+                \item Angular: allow all of CRUD operations on assets and per-user listing
+                \item R and bash: asset adding script, printable version of asset listing and two plotting scripts
+            \end{itemize}
+    \end{itemize}
+\end{frame}
