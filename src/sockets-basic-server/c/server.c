@@ -61,7 +61,13 @@ int main ()
 
         // Clean up by closing the socket.
         //
+        // Shutdown precedes close to make sure protocol level shutdown is executed completely.
+        // Close without shutdown may use RST instead of FIN to terminate connection, dropping data that is in flight.
+        //
         // It is also possible to use shutdown to close input and output streams independently.
+
+        int shutdown_status = shutdown (client_socket, SHUT_RDWR);
+        ASSERT (shutdown_status == 0, "Failed to shutdown incoming connection.");
 
         int close_status = close (client_socket);
         ASSERT (close_status == 0, "Failed to close incoming connection.");
