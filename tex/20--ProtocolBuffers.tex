@@ -38,7 +38,7 @@
 
     \begin{block}{Source Distribution}
 \begin{lstlisting}[language=bash,style=mini]
-> git clone -b 3.4.x http://github.com/google/protobuf
+> git clone -b 3.6.x http://github.com/protocolbuffers/protobuf
 > cd protobuf
 > ./autogen.sh
 > ./configure --prefix=${HOME}/.local
@@ -53,6 +53,26 @@
     \bigskip
 
     \hfill ... use supplied install-protobuf.sh script
+\end{frame}
+
+
+\begin{frame}[fragile]{Message Specification Example}
+\begin{lstlisting}[style=mini]
+syntax = "proto3";
+
+package example;
+
+message AnExampleMessage {
+    uint32 some_integer = 1;
+    sint32 another_integer = 2;
+    string some_string = 8;
+    repeated string some_more_strings = 11;
+}
+
+message MoreExampleMessages {
+    repeated AnExampleMessage messages = 1;
+}
+\end{lstlisting}
 \end{frame}
 
 
@@ -82,7 +102,7 @@
                 optional \\
                 zero or null \\
                 same as default \\
-                discarded \\
+                version dependent \\
                 any type fields \\
                 binary and JSON \\
             \end{block}
@@ -91,24 +111,110 @@
 \end{frame}
 
 
-\begin{frame}[fragile]{Message Specification Example}
-\begin{lstlisting}[style=mini]
-syntax = "proto3";
+% Selected Version History
+% - 3.6
+%   - Dropped support for certain older programming language versions
+% - 3.5
+%   - Unknown fields preserved by default and can be discarded explicitly
+% - 3.0
+%   - Unknown fields discarded
 
-package example;
 
-message AnExampleMessage {
-    uint32 some_integer = 1;
-    sint32 another_integer = 2;
-    string some_string = 8;
-    repeated string some_more_strings = 11;
-}
+\section{Assignment Part I}
 
-message MoreExampleMessages {
-    repeated AnExampleMessage messages = 1;
-}
-\end{lstlisting}
+
+\begin{frame}{Assignment}
+    \begin{block}{Server}
+        Implement a server that will provide information on current time.
+        \begin{itemize}
+            \item The server should accept a spec of what fields to return.
+            \item Fields should be standard YYYY-MM-DD HH:MM:SS.
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Client}
+        Implement a client that will query server time:
+        \begin{itemize}
+            \item Pick a random combination of fields.
+            \item Query information on current time.
+            \item Print the time.
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Interoperability}
+        Implement compatible clients and servers in two languages.
+    \end{block}
 \end{frame}
+
+
+\begin{frame}[fragile]{Examples To Begin With ...}
+\begin{lstlisting}[language=bash,style=mini]
+> git clone http://github.com/D-iii-S/teaching-introduction-middleware.git
+\end{lstlisting}
+    \begin{block}{C}
+\begin{lstlisting}[language=bash,style=mini]
+> cd teaching-introduction-middleware/src/protocol-buffers-basic-usage/c
+> cat README.md
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Java}
+\begin{lstlisting}[language=bash,style=mini]
+> cd teaching-introduction-middleware/src/protocol-buffers-basic-usage/java
+> cat README.md
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Python}
+\begin{lstlisting}[language=bash,style=mini]
+> cd teaching-introduction-middleware/src/protocol-buffers-basic-usage/python
+> cat README.md
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\section{Message Encoding}
+
+
+\begin{frame}{Message Encoding}
+    \begin{block}{Goals}
+        Compact structure with support for field removal and addition.
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Features}
+        \begin{itemize}
+            \item Sequence of field key value pairs.
+            \item Key is field index and type indication.
+                \begin{itemize}
+                    \item One of variable integer, explicit length, fixed length.
+                    \item Not enough to tell the exact field type !
+                \end{itemize}
+            \item Primitive repeated fields packed.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}{Variable Length Encoding}
+    \begin{block}{Goals}
+        Support integers clustered around zero more efficiently.
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Features}
+        \begin{itemize}
+            \item Integer stored as variable number of 7 bit values.
+            \item High bit set to zero for last byte.
+            \item Little endian byte order.
+            \item Signed variant.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+
+\section{Message Specification}
 
 
 \begin{frame}[fragile]{Primitive Field Types}
@@ -182,31 +288,7 @@ message AnExampleMessage {
 \end{frame}
 
 
-\section{Assignment Details}
-
-
-\begin{frame}{Assignment}
-    \begin{block}{Server}
-        Implement a server that will provide information on current time.
-        \begin{itemize}
-            \item The server should accept a spec of what fields to return.
-            \item Fields should be standard YYYY-MM-DD HH:MM:SS.
-        \end{itemize}
-    \end{block}
-
-    \begin{block}{Client}
-        Implement a client that will query server time:
-        \begin{itemize}
-            \item Pick a random combination of fields.
-            \item Query information on current time.
-            \item Print the time.
-        \end{itemize}
-    \end{block}
-
-    \begin{block}{Interoperability}
-        Implement compatible clients and servers in two languages.
-    \end{block}
-\end{frame}
+\section{Message Manipulation}
 
 
 \begin{frame}[fragile]{C++ Message Basics}
@@ -348,49 +430,15 @@ AnExampleMessage.FromString (file.read ())
 \end{frame}
 
 
-\section{Encoding Overview}
-
-
-\begin{frame}{Message Encoding}
-    \begin{block}{Goals}
-        Compact structure with support for field removal and addition.
-    \end{block}
-
-    \bigskip
-
-    \begin{block}{Features}
-        \begin{itemize}
-            \item Sequence of field key value pairs.
-            \item Key is field index and type indication.
-                \begin{itemize}
-                    \item One of variable integer, explicit length, fixed length.
-                    \item Not enough to tell the exact field type !
-                \end{itemize}
-            \item Primitive repeated fields packed.
-        \end{itemize}
-    \end{block}
+\begin{frame}{Code Now ...}
+    \commitstrip{http://www.commitstrip.com/en/2017/03/16/when-we-leave-coders-to-do-their-own-thing}{coders-own}{0.9}
 \end{frame}
 
 
-\begin{frame}{Variable Length Encoding}
-    \begin{block}{Goals}
-        Support integers clustered around zero more efficiently.
-    \end{block}
-
-    \bigskip
-
-    \begin{block}{Features}
-        \begin{itemize}
-            \item Integer stored as variable number of 7 bit values.
-            \item High bit set to zero for last byte.
-            \item Little endian byte order.
-            \item Signed variant.
-        \end{itemize}
-    \end{block}
-\end{frame}
+\section{Assignment Part II}
 
 
-\begin{frame}{Assignment Extension}
+\begin{frame}{Assignment}
     \begin{block}{Performance}
         Measure the performance of your implementation.
     \end{block}

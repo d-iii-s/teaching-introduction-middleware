@@ -56,7 +56,12 @@
 
 %
 
-\newcommand\simplefootnote[1]{\begingroup\renewcommand\thefootnote{}\footnote{#1}\addtocounter{footnote}{-1}\endgroup}
+\newcommand\commitstrip[3]{
+    \centering
+    \includegraphics[width=#3\linewidth,keepaspectratio]{img/#2.jpg}
+
+    \url{#1}
+}
 
 %
 

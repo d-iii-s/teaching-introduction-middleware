@@ -7,9 +7,9 @@ MAKEFLAGS += --no-builtin-rules --no-builtin-variables
 PC = $(shell pkg-config --variable=prefix protobuf)/bin/protoc
 PC_OPTS =
 CC = g++
-CC_OPTS = -O0 -g $(shell pkg-config --cflags protobuf) -Wall -Wextra -Wno-unused-parameter -Werror
+CC_OPTS = -std=c++11 -O0 -g $(shell pkg-config --cflags protobuf) -Wall -Wextra -Wno-unused-parameter -Werror
 LD = g++
-LD_OPTS = -O0 -g $(shell pkg-config --libs protobuf)
+LD_OPTS = -std=c++11 -O0 -g $(shell pkg-config --libs protobuf)
 
 # Files
 
