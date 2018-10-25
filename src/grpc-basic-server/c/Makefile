@@ -4,6 +4,8 @@
 
 MAKEFLAGS += --no-builtin-rules --no-builtin-variables
 
+PC = $(shell pkg-config --variable=prefix protobuf)/bin/protoc
+PC_OPTS = --plugin=protoc-gen-grpc=$(shell pkg-config --variable=prefix grpc++)/bin/grpc_cpp_plugin
 CC = g++
 CC_OPTS = -std=c++11 -O0 -g $(shell pkg-config --cflags protobuf grpc++) -Wall -Wextra -Wno-unused-parameter -Werror
 LD = g++
@@ -42,7 +44,7 @@ server.cc: example.pb.h example.grpc.pb.h
 	$(CC) $(CC_OPTS) -c -o $@ $<
 
 %.pb.h %.pb.cc %.grpc.pb.h %.grpc.pb.cc: %.proto
-	protoc --plugin=protoc-gen-grpc=$(HOME)/.local/bin/grpc_cpp_plugin --cpp_out="." --grpc_out="." example.proto
+	$(PC) $(PC_OPTS) --cpp_out="." --grpc_out="." example.proto
 
 # Deps
 

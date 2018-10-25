@@ -31,6 +31,7 @@ socket = CreateSocket (comms_domain, socket_type);
 ConnectToServer (socket, server_address);
 ... Write (socket, data);
 ... Read (socket, data);
+Shutdown (socket);
 Close (socket);
 \end{lstlisting}
     \end{block}
@@ -42,13 +43,14 @@ PermitListeningOnSocket (socket, backlog);
 client_socket, client_address = AcceptIncomingConnection (socket);
 ... Write (client_socket, data);
 ... Read (client_socket, data);
+Shutdown (client_socket);
 Close (client_socket);
 \end{lstlisting}
     \end{block}
 \end{frame}
 
 
-\section{Assignment Details}
+\section{Assignment Part I}
 
 
 \begin{frame}{Assignment}
@@ -67,7 +69,7 @@ Close (client_socket);
         \begin{itemize}
             \item Connect to the server described above.
             \item Query information on current time.
-            \item Wrap all this in local function.
+            \item Wrap all this in a local function.
             \item Print the time.
         \end{itemize}
     \end{block}
@@ -144,6 +146,34 @@ def server_time ():
 \end{frame}
 
 
+\begin{frame}[fragile]{Examples To Begin With ...}
+\begin{lstlisting}[language=bash,style=mini]
+> git clone http://github.com/D-iii-S/teaching-introduction-middleware.git
+\end{lstlisting}
+    \begin{block}{C}
+\begin{lstlisting}[language=bash,style=mini]
+> cd teaching-introduction-middleware/src/sockets-basic-server/c
+> cat README.md
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Java}
+\begin{lstlisting}[language=bash,style=mini]
+> cd teaching-introduction-middleware/src/sockets-basic-server/java
+> cat README.md
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Python}
+\begin{lstlisting}[language=bash,style=mini]
+> cd teaching-introduction-middleware/src/sockets-basic-server/python
+> cat README.md
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\section{Marshalling Implementation}
+
+
 \begin{frame}[fragile]{C Marshalling}
     \begin{block}{Textual Stream ?}
 \begin{lstlisting}[language=c,style=mini]
@@ -216,9 +246,12 @@ socket.send (data.to_bytes (4, 'little'))
 \end{frame}
 
 
-\begin{frame}{Assignment Extension}
+\section{Assignment Part II}
+
+
+\begin{frame}{Assignment}
     \begin{block}{Languages}
-        Implement the assignment in at least two programming languages.
+        Implement Part I in at least two programming languages.
     \end{block}
 
     \bigskip

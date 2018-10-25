@@ -24,32 +24,28 @@
   keepspaces=true,              % Do not replace spaces
 }
 
-% https://tex.stackexchange.com/a/83100
-
 \lstdefinelanguage{json}{
     basicstyle=\normalfont\ttfamily,
-    numberstyle=\scriptsize,
-    stepnumber=1,
-    numbersep=8pt,
-    showstringspaces=false,
-    breaklines=true,
-    literate=
-     *{0}{{{\color{black}0}}}{1}
-      {1}{{{\color{black}1}}}{1}
-      {2}{{{\color{black}2}}}{1}
-      {3}{{{\color{black}3}}}{1}
-      {4}{{{\color{black}4}}}{1}
-      {5}{{{\color{black}5}}}{1}
-      {6}{{{\color{black}6}}}{1}
-      {7}{{{\color{black}7}}}{1}
-      {8}{{{\color{black}8}}}{1}
-      {9}{{{\color{black}9}}}{1}
-      {:}{{{\color{black}{:}}}}{1}
-      {,}{{{\color{black}{,}}}}{1}
-      {\{}{{{\color{black}{\{}}}}{1}
-      {\}}{{{\color{black}{\}}}}}{1}
-      {[}{{{\color{black}{[}}}}{1}
-      {]}{{{\color{black}{]}}}}{1},
+}
+
+\lstdefinelanguage{yaml}{
+    basicstyle=\normalfont\ttfamily,
+    keywords={true,false,null,y,n},
+}
+
+\lstdefinelanguage{typescript}{
+    basicstyle=\normalfont\ttfamily,
+    morekeywords={break, case, catch, class, const, continue, debugger, default},
+    morekeywords={delete, do, else, enum, export, extends, false, finally, for},
+    morekeywords={function, if, import, in, instanceof, new, null, return},
+    morekeywords={super, switch, this, throw, true, try, typeof, var},
+    morekeywords={void, while, with},
+    morekeywords={as, implements, interface, let, package, private, protected, public, static, yield},
+    morekeywords={any, boolean, constructor, declare, get, module, require, number, set, string, symbol, type, from, of},
+    morecomment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    morestring=[b]',
+    morestring=[b]"
 }
 
 \lstdefinestyle{pico}{basicstyle=\linespread{0.55}\monopico}

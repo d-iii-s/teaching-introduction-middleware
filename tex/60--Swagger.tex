@@ -155,7 +155,7 @@
 
 
 \begin{frame}[fragile]{Assignment Interface: Prologue}
-\begin{lstlisting}[language=swagger,style=mini]
+\begin{lstlisting}[language=yaml,style=mini]
 swagger: 2.0
 
 info:
@@ -178,7 +178,7 @@ schemes:
 
 
 \begin{frame}[fragile]{Assignment Interface: Listing Users}
-\begin{lstlisting}[language=swagger,style=mini]
+\begin{lstlisting}[language=yaml,style=mini]
 paths:
   /users:
     get:
@@ -207,7 +207,7 @@ definitions:
 
 
 \begin{frame}[fragile]{Assignment Interface: Querying User Data}
-\begin{lstlisting}[language=swagger,style=mini]
+\begin{lstlisting}[language=yaml,style=mini]
   /user/{id}:
     get:
       summary: Query user information.
@@ -231,7 +231,7 @@ definitions:
 
 
 \begin{frame}[fragile]{Assignment Interface: Updating User Data}
-\begin{lstlisting}[language=swagger,style=mini]
+\begin{lstlisting}[language=yaml,style=mini]
     post:
       summary: Update user information.
       operationId: updateUser
@@ -259,7 +259,7 @@ definitions:
 
 
 \begin{frame}[fragile]{Assignment Interface: Inheritance}
-\begin{lstlisting}[language=swagger,style=mini]
+\begin{lstlisting}[language=yaml,style=mini]
 definitions:
   UserBase:
     type: object
@@ -291,7 +291,7 @@ definitions:
 \end{lstlisting}
 
     \begin{block}{Assignment}
-        Use scripts \lstinline{build-\{server,client\}-*.sh} \\
+        Use scripts \lstinline|build-{server,client}-*.sh| \\
         after updating \lstinline{api.yaml} to invoke code generator.
     \end{block}
 \end{frame}

@@ -4,10 +4,12 @@
 
 MAKEFLAGS += --no-builtin-rules --no-builtin-variables
 
+PC = $(shell pkg-config --variable=prefix protobuf)/bin/protoc
+PC_OPTS =
 CC = g++
-CC_OPTS = -O0 -g -Wall -Wextra -Werror
+CC_OPTS = -O0 -g $(shell pkg-config --cflags protobuf) -Wall -Wextra -Wno-unused-parameter -Werror
 LD = g++
-LD_OPTS = -O0 -g -lprotobuf
+LD_OPTS = -O0 -g $(shell pkg-config --libs protobuf)
 
 # Files
 
@@ -35,7 +37,7 @@ example.cc: example.pb.h
 	$(CC) $(CC_OPTS) -c -o $@ $<
 
 %.pb.h %.pb.cc: %.proto
-	protoc --cpp_out="." example.proto
+	$(PC) $(PC_OPTS) --cpp_out="." example.proto
 
 # Deps
 
