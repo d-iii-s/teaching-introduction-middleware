@@ -356,8 +356,8 @@ messageBuilder.setSomeInteger (1234);
 int size = messages.getMessagesCount ();
 AnExampleMessage message = messages.getMessages (1234);
 List<AnExampleMessage> messageList = messages.getMessagesList ();
-messages.addMessages (messageBuilder);
-messages.addMessages (message);
+messagesBuilder.addMessages (messageBuilder);
+messagesBuilder.addMessages (message);
 \end{lstlisting}
     \end{block}
 \end{frame}
