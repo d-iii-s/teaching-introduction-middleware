@@ -17,6 +17,7 @@
             \item Serialization code generation for multiple languages \\
                   (C++, Java, Python, Go, Ruby, JavaScript, Objective C, C\# ...).
             \item Binary transport format with compact data representation.
+            \item Textual transport using JSON.
         \end{itemize}
     \end{block}
 
@@ -76,41 +77,6 @@ message MoreExampleMessages {
 \end{frame}
 
 
-\begin{frame}{Version Summary}
-    \begin{columns}[b]
-        \begin{column}{.3\textwidth}
-            Fields \\
-            Default values \\
-            Missing values \\
-            Unknown fields \\
-            Message extensions \\
-            Encoding \\
-            \vspace{4pt}
-        \end{column}
-        \begin{column}{.3\textwidth}
-            \begin{block}{proto2}
-                required and optional \\
-                custom values \\
-                indicated \\
-                preserved \\
-                extension fields \\
-                binary \\
-            \end{block}
-        \end{column}
-        \begin{column}{.3\textwidth}
-            \begin{block}{proto3}
-                optional \\
-                zero or null \\
-                same as default \\
-                version dependent \\
-                any type fields \\
-                binary and JSON \\
-            \end{block}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-
 % Selected Version History
 % - 3.6
 %   - Dropped support for certain older programming language versions
@@ -118,6 +84,7 @@ message MoreExampleMessages {
 %   - Unknown fields preserved by default and can be discarded explicitly
 % - 3.0
 %   - Unknown fields discarded
+%   - Required fields discarded
 
 
 \section{Assignment Part I}
@@ -191,6 +158,7 @@ message MoreExampleMessages {
                     \item Not enough to tell the exact field type !
                 \end{itemize}
             \item Primitive repeated fields packed.
+            \item Total length not included !
         \end{itemize}
     \end{block}
 \end{frame}
