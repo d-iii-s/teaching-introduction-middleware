@@ -26,27 +26,27 @@ scoped_credentials = credentials.with_scopes (SCOPES)
 # The request object represents an HTTP transport layer used to renew tokens.
 request = google_auth_transport_requests.Request ()
 # Just create a channel, the request object could also be None if token renewal is not needed.
-channel = google_auth_transport_grpc.secure_authorized_channel (scoped_credentials, request, SERVICE)
+with google_auth_transport_grpc.secure_authorized_channel (scoped_credentials, request, SERVICE) as channel:
 
-# Create a stub object that provides the service interface.
-stub = SpeechStub (channel)
+    # Create a stub object that provides the service interface.
+    stub = SpeechStub (channel)
 
-# Encoding and sample rate are only needed for RAW files.
-# When using WAV or FLAC files it is detected automatically.
-config = RecognitionConfig ()
-# config.encoding = RecognitionConfig.LINEAR16
-# config.sample_rate_hertz = 16000
-config.language_code = 'en_US'
+    # Encoding and sample rate are only needed for RAW files.
+    # When using WAV or FLAC files it is detected automatically.
+    config = RecognitionConfig ()
+    # config.encoding = RecognitionConfig.LINEAR16
+    # config.sample_rate_hertz = 16000
+    config.language_code = 'en_US'
 
-audio = RecognitionAudio ()
-audio.content = open (sys.argv [1], 'rb').read ()
+    audio = RecognitionAudio ()
+    audio.content = open (sys.argv [1], 'rb').read ()
 
-message = RecognizeRequest (config = config, audio = audio)
-print ('Message:')
-print (message)
+    message = RecognizeRequest (config = config, audio = audio)
+    print ('Message:')
+    print (message)
 
-# Call the service through the stub object.
-response = stub.Recognize (message)
+    # Call the service through the stub object.
+    response = stub.Recognize (message)
 
-print ('Response:')
-print (response)
+    print ('Response:')
+    print (response)
