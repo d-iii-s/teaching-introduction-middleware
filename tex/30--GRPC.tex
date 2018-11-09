@@ -33,7 +33,7 @@
 \begin{frame}[fragile]{Installation}
     \begin{block}{Source Distribution}
 \begin{lstlisting}[language=bash,style=mini]
-> git clone -b v1.7.x http://github.com/grpc/grpc
+> git clone -b v1.16.x http://github.com/grpc/grpc
 > cd grpc
 > git submodule update --init
 > make -j 8 prefix=${HOME}/.local
@@ -48,6 +48,10 @@
 
     \hfill ... use supplied install-grpc.sh script
 \end{frame}
+
+
+% Installation timing
+% - 2018 version 1.16 in lab ~3 minutes
 
 
 \begin{frame}[fragile]{Service Specification Example}
@@ -71,7 +75,7 @@ service AnExampleService {
 \end{frame}
 
 
-\section{Assignment Details}
+\section{Assignment Part I}
 
 
 \begin{frame}{Assignment}
@@ -98,6 +102,34 @@ service AnExampleService {
 \end{frame}
 
 
+\begin{frame}[fragile]{Examples To Begin With ...}
+\begin{lstlisting}[language=bash,style=mini]
+> git clone http://github.com/D-iii-S/teaching-introduction-middleware.git
+\end{lstlisting}
+    \begin{block}{C}
+\begin{lstlisting}[language=bash,style=mini]
+> cd teaching-introduction-middleware/src/grpc-basic-server/c
+> cat README.md
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Java}
+\begin{lstlisting}[language=bash,style=mini]
+> cd teaching-introduction-middleware/src/grpc-basic-server/java
+> cat README.md
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Python}
+\begin{lstlisting}[language=bash,style=mini]
+> cd teaching-introduction-middleware/src/grpc-basic-server/python
+> cat README.md
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\section{Server Implementation}
+
+
 \begin{frame}[fragile]{C++ Service Basics}
     \begin{block}{Implementation}
 \begin{lstlisting}[language=c,style=mini]
@@ -119,30 +151,6 @@ builder.RegisterService (&service);
 std::unique_ptr<grpc.Server> server (builder.BuildAndStart ());
 
 server->Wait ();
-\end{lstlisting}
-    \end{block}
-\end{frame}
-
-
-\begin{frame}[fragile]{C++ Client Basics}
-    \begin{block}{Connection}
-\begin{lstlisting}[language=c,style=mini]
-std::shared_ptr<grpc.Channel> channel = grpc.CreateChannel (
-    "localhost:8888", grpc.InsecureChannelCredentials ());
-\end{lstlisting}
-    \end{block}
-
-    \bigskip
-
-    \begin{block}{Invocation}
-\begin{lstlisting}[language=c,style=mini]
-grpc.ClientContext context;
-AnExampleResponse response;
-std::shared_ptr<AnExampleService::Stub> stub = AnExampleService::NewStub (channel);
-grpc.Status status = stub->OneToOne (&context, request, &response);
-if (status.ok ()) {
-    // Response available here ...
-}
 \end{lstlisting}
     \end{block}
 \end{frame}
@@ -173,29 +181,6 @@ server.awaitTermination ();
 \end{frame}
 
 
-\begin{frame}[fragile]{Java Client Basics}
-    \begin{block}{Connection}
-\begin{lstlisting}[language=java,style=mini]
-io.grpc.ManagedChannel channel = io.grpc.ManagedChannelBuilder
-    .forAddress ("localhost", 8888)
-    .usePlaintext (true)
-    .build ();
-\end{lstlisting}
-    \end{block}
-
-    \bigskip
-
-    \begin{block}{Invocation}
-\begin{lstlisting}[language=java,style=mini]
-AnExampleServiceGrpc.AnExampleServiceBlockingStub stub =
-    AnExampleServiceGrpc.newBlockingStub (channel);
-AnExampleResponse response = stub.oneToOne (request);
-// Response available here ...
-\end{lstlisting}
-    \end{block}
-\end{frame}
-
-
 \begin{frame}[fragile]{Python Service Basics}
     \begin{block}{Implementation}
 \begin{lstlisting}[language=python,style=mini]
@@ -221,10 +206,60 @@ server.start ()
 \end{frame}
 
 
+\section{Client Implementation}
+
+
+\begin{frame}[fragile]{C++ Client Basics}
+    \begin{block}{Connection}
+\begin{lstlisting}[language=c,style=mini]
+std::shared_ptr<grpc.Channel> channel = grpc.CreateChannel (
+    "localhost:8888", grpc.InsecureChannelCredentials ());
+\end{lstlisting}
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Invocation}
+\begin{lstlisting}[language=c,style=mini]
+grpc.ClientContext context;
+AnExampleResponse response;
+std::shared_ptr<AnExampleService::Stub> stub = AnExampleService::NewStub (channel);
+grpc.Status status = stub->OneToOne (&context, request, &response);
+if (status.ok ()) {
+    // Response available here ...
+}
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Java Client Basics}
+    \begin{block}{Connection}
+\begin{lstlisting}[language=java,style=mini]
+io.grpc.ManagedChannel channel = io.grpc.ManagedChannelBuilder
+    .forAddress ("localhost", 8888)
+    .usePlaintext (true)
+    .build ();
+\end{lstlisting}
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Invocation}
+\begin{lstlisting}[language=java,style=mini]
+AnExampleServiceGrpc.AnExampleServiceBlockingStub stub =
+    AnExampleServiceGrpc.newBlockingStub (channel);
+AnExampleResponse response = stub.oneToOne (request);
+// Response available here ...
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
 \begin{frame}[fragile]{Python Client Basics}
     \begin{block}{Connection}
 \begin{lstlisting}[language=python,style=mini]
-channel = grpc.insecure_channel ("localhost:8888")
+with grpc.insecure_channel ("localhost:8888") as channel:
 \end{lstlisting}
     \end{block}
 
@@ -236,5 +271,28 @@ stub = AnExampleServiceStub (channel)
 response = stub.OneToOne (request)
 # Response available here ...
 \end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\section{Assignment Part II}
+
+
+\begin{frame}{Assignment}
+    \begin{block}{Performance}
+        Measure the performance of your implementation.
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{Experiment Design}
+        Stick to the following, or provide arguments for why not:
+        \begin{itemize}
+            \item Random field mix, each field with probability 1/2.
+            \item Measure at least two minutes long traffic.
+            \item Report average invocation throughput.
+            \item No printing during measurement.
+            \item Compare with past assignments.
+        \end{itemize}
     \end{block}
 \end{frame}
