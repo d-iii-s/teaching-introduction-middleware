@@ -33,6 +33,47 @@
 \end{frame}
 
 
+\section{Assignment Part I}
+
+
+\begin{frame}[fragile]{Assignment}
+    \begin{block}{Peer}
+        Implement a process that will update a shared hash map.
+        \begin{itemize}
+            \item The shared hash map is available through \lstinline{SharedHashMap} channel.
+            \item The updates are transmitted through \lstinline{UpdateEvent} class.
+        \end{itemize}
+    \end{block}
+
+\begin{lstlisting}[language=java,style=mini]
+import java.io.Serializable;
+
+public class UpdateEvent implements Serializable {
+    private static final long serialVersionUID = 0xBAADBAADBAADL;
+
+    public int key;
+    public String value;
+}
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{Examples To Begin With ...}
+\begin{lstlisting}[language=bash,style=mini]
+> git clone http://github.com/D-iii-S/teaching-introduction-middleware.git
+\end{lstlisting}
+    \begin{block}{Java}
+\begin{lstlisting}[language=bash,style=mini]
+> cd teaching-introduction-middleware/src/jgroups-basic-peer/java
+> cat README.md
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\section{Interface Overview}
+
+
 \begin{frame}[fragile]{JChannel Class}
 \begin{lstlisting}[language=java,style=mini]
 public class JChannel implements Closeable {
@@ -86,31 +127,6 @@ public class Message ... {
 \end{frame}
 
 
-\section{Assignment Details}
-
-
-\begin{frame}[fragile]{Assignment}
-    \begin{block}{Peer}
-        Implement a process that will update shared hash map.
-        \begin{itemize}
-            \item The shared hash map is available through \lstinline{SharedHashMap} channel.
-            \item The updates are transmitted through \lstinline{UpdateEvent} class.
-        \end{itemize}
-    \end{block}
-
-\begin{lstlisting}[language=java,style=mini]
-import java.io.Serializable;
-
-public class UpdateEvent implements Serializable {
-    private static final long serialVersionUID = 0xBAADBAADBAADL;
-
-    public int key;
-    public String value;
-}
-\end{lstlisting}
-\end{frame}
-
-
 \begin{frame}[fragile]{ReceiverAdapter Class}
 \begin{lstlisting}[language=java,style=mini]
 public class ReceiverAdapter implements Receiver {
@@ -141,9 +157,17 @@ public interface ChannelListener {
 \end{frame}
 
 
-\begin{frame}[fragile]{Assignment Extension}
+\begin{frame}{Code Now ...}
+    \commitstrip{http://www.commitstrip.com/en/2018/11/20/one-final-detail}{final-detail}{0.6}
+\end{frame}
+
+
+\section{Assignment Part II}
+
+
+\begin{frame}[fragile]{Assignment}
     \begin{block}{Peer}
-        Implement a process that will track shared hash map state.
+        Implement a process that will track and display a shared hash map state.
         \begin{itemize}
             \item The shared hash map is available through \lstinline{SharedHashMap} channel.
             \item The updates are transmitted through \lstinline{UpdateEvent} class.
