@@ -7,12 +7,11 @@ Use for example http://www.voxforge.org. The service can accept WAV and FLAC fil
 ## Running the example
 
 ```
-> python -m virtualenv .
-> bin/pip install requests grpcio google-auth
+> python3 -m venv .
+> bin/pip install requests protobuf grpcio google-auth
 > git clone http://github.com/googleapis/googleapis.git
 > cd googleapis
-> make OUTPUT=.. LANGUAGE=python GRPCPLUGIN=/path/to/grpc_python_plugin
+> make OUTPUT=.. LANGUAGE=python GRPCPLUGIN=$(pkg-config --variable=prefix grpc++)/bin/grpc_python_plugin
 > cd ..
-> find google -type d -exec touch {}/__init__.py \;
 > bin/python client.py /path/to/speech.wav
 ```
