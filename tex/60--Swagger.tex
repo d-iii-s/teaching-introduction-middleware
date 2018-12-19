@@ -167,12 +167,13 @@ info:
     name: Apache 2.0
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 
-host: localhost:8080
+host: localhost:8080 /@ \alert{\# Simplifies usage of generated code} @/
 
-basePath: /v1
+basePath: /v1 /@ \alert{\# Version your API from the beginning} @/
 
 schemes:
-  - http
+  - http /@ \alert{\# For testing only, hide behind SSL proxy in production (and do} @/
+         /@ \alert{\# not forget about CORS (Access-Control-Allow-Origin) etc.)} @/
 \end{lstlisting}
 \end{frame}
 
@@ -182,9 +183,9 @@ schemes:
 paths:
   /users:
     get:
-      operationId: readUsers
+      operationId: readUsers /@ \alert{\# Callback/stub name in your code} @/
       produces: [ "application/json" ]
-      responses:
+      responses: /@ \alert{\# HTTP status codes} @/
         200:
           schema:
             type: array
@@ -192,7 +193,7 @@ paths:
               $ref: "#/definitions/UserBase"
 
 definitions:
-  UserBase:
+  UserBase: /@ \alert{\# Class in the generated code} @/
     type: object
     properties:
       id: { type: integer }
@@ -255,7 +256,7 @@ definitions:
 \begin{frame}[fragile]{Assignment Interface: Inheritance}
 \begin{lstlisting}[language=yaml,style=mini]
 definitions:
-  UserBase:
+  UserBase:  /@ \alert{\# Used in listings} @/
     type: object
     properties:
       id:
@@ -266,7 +267,7 @@ definitions:
         type: string
       email:
         type: string
-  User:
+  User:  /@ \alert{\# Detailed information} @/
     allOf:
       - $ref: "#/definitions/UserBase"
       - type: object
@@ -281,17 +282,32 @@ definitions:
 
 \begin{frame}[fragile]{Code Generation}
 \begin{lstlisting}[language=bash,style=mini]
-> swagger-codegen generate -i api.yaml -o <path> -l <framework>
+swagger-codegen generate -i api.yaml -o <path> -l <framework>
 \end{lstlisting}
 
     \begin{block}{Assignment}
-        Use scripts \lstinline|on-api-update.sh| \\
-        after updating \lstinline{api.yaml} to invoke code generator.
+        The \lstinline|fetch.sh| fetches the code generator JAR. \\
+        ~\\
+        Use \lstinline|on-api-update.sh| scripts after updating
+        \lstinline{api.yaml} to invoke the code generator.
     \end{block}
 \end{frame}
 
 
-\begin{frame}{Flask-Based and Spring-Based Servers}
+\begin{frame}{Flask-based and Spring-based Servers}
+    \begin{block}{Flask (Python)}
+        \begin{itemize}
+            \item microframework
+            \item routing, sessions, templates \ldots
+            \item but no databases, form validation \ldots
+        \end{itemize}
+    \end{block}
+    \begin{block}{Spring (Java)}
+        \begin{itemize}
+            \item application framework for everything :-)
+            \item example uses Boot to simplify configuration
+        \end{itemize}
+    \end{block}
     \begin{block}{General}
         \begin{itemize}
             \item No real database (data kept in memory)
@@ -302,7 +318,7 @@ definitions:
 \end{frame}
 
 
-\begin{frame}[fragile]{Flask-Based Server}
+\begin{frame}[fragile]{Flask-based Server}
 \begin{block}{\lstinline{swagger\_server/controllers/default\_controller.py}}
 \begin{lstlisting}[language=python,style=mini]
 def create_user(body):  # noqa: E501
@@ -325,7 +341,7 @@ def create_user(body):  # noqa: E501
 \end{frame}
 
 
-\begin{frame}[fragile]{Spring-Based Server}
+\begin{frame}[fragile]{Spring-based Server}
     \begin{block}{\lstinline{src/gen/java/io/swagger/api/UsersApiController.java}}
 \begin{lstlisting}[language=java,style=mini]
 public ResponseEntity<Void> createUser (
@@ -345,10 +361,28 @@ public ResponseEntity<Void> createUser (
     \end{block}
 \end{frame}
 
+\begin{frame}{Clients}
+    \begin{block}{General}
+        \begin{itemize}
+            \item Wraps the HTTP communication
+            \item Provides classes for individual definitions (model)
+            \item Often future-based communication
+            \item Generated code is used as a library
+        \end{itemize}
+    \end{block}
+    \begin{block}{Assignment}
+        \begin{itemize}
+            \item Angular -- web UI front-end to the server
+            \item Bash -- scriptable command-line access to the server
+            \item R -- data processing communication directly with the server
+        \end{itemize}
+    \end{block}
+\end{frame}
 
-\begin{frame}{Angular-Based Client}
-    \begin{block}{Goal}
-        Add interface components for listing complete inventory. \\ Extend user detail page with asset list.
+\begin{frame}{Angular-based Client}
+    \begin{block}{Assignment}
+        Add interface components for listing complete inventory. \\
+        Extend user detail page with asset list.
     \end{block}
 
     \begin{block}{General}
@@ -361,7 +395,7 @@ public ResponseEntity<Void> createUser (
 \end{frame}
 
 
-\begin{frame}{Angular-Based Client}
+\begin{frame}{Angular-based Client}
     \begin{block}{\lstinline{app-routing.module.ts}}
         \begin{itemize}
             \item Import all your components
@@ -377,7 +411,7 @@ public ResponseEntity<Void> createUser (
 \end{frame}
 
 
-\begin{frame}[fragile]{Angular-Based Client: Reading Server Data}
+\begin{frame}[fragile]{Angular-based Client: Reading Server Data}
     \begin{block}{\lstinline{users/users.component.ts}}
 \begin{lstlisting}[language=typescript,style=mini]
 export class UsersComponent implements OnInit {
@@ -404,7 +438,7 @@ export class UsersComponent implements OnInit {
 \end{frame}
 
 
-\begin{frame}[fragile]{Angular-Based Application: Writing Server Data}
+\begin{frame}[fragile]{Angular-based Application: Writing Server Data}
     \begin{block}{\lstinline{users/user.component.html}}
 \begin{lstlisting}[language=html,style=mini]
 <form (ngSubmit)="save();">
@@ -429,7 +463,7 @@ export class UserComponent {
 \end{frame}
 
 
-\begin{frame}[fragile]{Bash Client: Overview}
+\begin{frame}[fragile]{Bash client: Overview}
     \begin{block}{Generated}
         The generated script \lstinline{client.sh} is a thin wrapper on top of \lstinline{curl} doing the actual requests. Useful to check that the server works as expected.
     \end{block}
@@ -441,7 +475,7 @@ export class UserComponent {
         Reads employee list from a CSV, adds them to the database.
     \end{block}
 
-    \begin{block}{Task}
+    \begin{block}{Assignment}
         Extend the \lstinline{make-check-lists} to include assets listing and create a similar script for adding assets.
 
 \begin{lstlisting}
@@ -453,7 +487,7 @@ Magic Wand,42,2017,harry.potter@example.com
 \end{frame}
 
 
-\begin{frame}[fragile]{Bash Client: Usage}
+\begin{frame}[fragile]{Bash client: Usage}
 \begin{lstlisting}[language=bash]
 > ./client.sh --silent readUsers | json_reformat
 
@@ -468,12 +502,12 @@ Magic Wand,42,2017,harry.potter@example.com
 \end{frame}
 
 
-\begin{frame}[fragile]{R Client: Overview}
+\begin{frame}[fragile]{R client: Overview}
     \begin{block}{\lstinline{dept-plot.r}}
         Draws a barplot showing number of employees in each department.
     \end{block}
 
-    \begin{block}{Task}
+    \begin{block}{Assignment}
         Create a similar script that will show total price of
         assets across departments and for each employee.
     \end{block}
