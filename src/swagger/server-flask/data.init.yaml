@@ -1,0 +1,38 @@
+data:
+  users:
+    - id: 1
+      firstname: John
+      lastname: Doe
+      email: john.doe@example.com
+      homepage: http://www.example.com/john.doe/
+      department: Operations
+      phone:
+        - "123 456 789"
+        - "321 654 987"
+    - id: 2
+      firstname: Jane
+      lastname: Doe
+      email: jane.doe@example.com
+      homepage: http://www.example.com/jane.doe/
+      department: Operations
+      phone:
+        - "987 654 321"
+        - "789 456 123"
+    - id: 3
+      firstname: Jane
+      lastname: Roe
+      email: jane.roe@example.com
+      homepage: http://www.example.com/jane.roe/
+      department: Operations
+      phone:
+        - "987 456 321"
+        - "789 654 123"
+    - id: 4
+      firstname: Richard
+      lastname: Roe
+      email: richard.roe@example.com
+      homepage: http://www.example.com/richard.roe/
+      department: Sales
+      phone:
+        - "123 456 987"
+        - "321 654 789"

@@ -1,0 +1,6 @@
+/requirements.txt
+/generated/
+/flask-env/
+/swagger_server/
+__pycache__
+/data.yaml

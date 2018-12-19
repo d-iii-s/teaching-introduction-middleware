@@ -1,0 +1,54 @@
+{
+    "data": {
+        "users": [
+            {
+                "department": "Operations",
+                "homepage": "http://www.example.com/john.doe/",
+                "email": "john.doe@example.com",
+                "phone": [
+                    "123 456 789",
+                    "321 654 987"
+                ],
+                "lastname": "Doe",
+                "firstname": "John",
+                "id": 1
+            },
+            {
+                "department": "Operations",
+                "homepage": "http://www.example.com/jane.doe/",
+                "email": "jane.doe@example.com",
+                "phone": [
+                    "987 654 321",
+                    "789 456 123"
+                ],
+                "lastname": "Doe",
+                "firstname": "Jane",
+                "id": 2
+            },
+            {
+                "department": "Operations",
+                "homepage": "http://www.example.com/jane.roe/",
+                "email": "jane.roe@example.com",
+                "phone": [
+                    "987 456 321",
+                    "789 654 123"
+                ],
+                "lastname": "Roe",
+                "firstname": "Jane",
+                "id": 3
+            },
+            {
+                "department": "Sales",
+                "homepage": "http://www.example.com/richard.roe/",
+                "email": "richard.roe@example.com",
+                "phone": [
+                    "123 456 987",
+                    "321 654 789"
+                ],
+                "lastname": "Roe",
+                "firstname": "Richard",
+                "id": 4
+            }
+        ]
+    }
+}

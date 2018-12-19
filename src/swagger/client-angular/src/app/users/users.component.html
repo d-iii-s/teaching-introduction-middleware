@@ -1,0 +1,31 @@
+<h1>List of users</h1>
+
+<form *ngIf="creating" (ngSubmit)="create(); creating = false;">
+   <fieldset>
+   <legend>Create a user {{newuser.firstname}} {{newuser.lastname}}</legend>
+   <dl>
+   <dt><label for="user-first-name">First name:</label></dt>
+	   <dd><input [(ngModel)]="newuser.firstname" id="user-first-name" name="first-name" placeholder="First name"/></dd>
+	   <dt><label for="user-last-name">Last name:</label></dt>
+	   <dd><input [(ngModel)]="newuser.lastname" id="user-last-name" name="last-name" placeholder="Last name"/></dd>
+	   <dt><label for="user-department">Department:</label></dt>
+	   <dd><input [(ngModel)]="newuser.department" id="user-department" name="department" placeholder="Last name"/></dd>
+	   <dt><label for="user-email">E-mail:</label></dt>
+	   <dd><input [(ngModel)]="newuser.email" id="user-email" name="email" placeholder="email"/></dd>
+	   <dt><label for="user-homepage">Homepage:</label></dt>
+	   <dd><input [(ngModel)]="newuser.homepage" id="user-homepage" name="homepage" placeholder="http://www.example.com/"/></dd>
+	   
+       <dt><button type="submit">Create</button></dt>
+   </dl>
+   </fieldset>
+</form>
+
+<ul>
+  <li (click)="creating = true;" *ngIf="!creating">Create ...</li>
+
+  <li *ngFor="let user of users">
+    <a routerLink="/user/{{user.id}}">
+      {{user.lastname}}, {{user.firstname}}
+    </a>
+  </li>
+</ul>

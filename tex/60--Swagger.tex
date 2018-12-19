@@ -183,8 +183,7 @@ paths:
   /users:
     get:
       operationId: readUsers
-      produces:
-        - "application/json"
+      produces: [ "application/json" ]
       responses:
         200:
           schema:
@@ -196,12 +195,9 @@ definitions:
   UserBase:
     type: object
     properties:
-      id:
-        type: integer
-      firstname:
-        type: string
-      lastname:
-        type: string
+      id: { type: integer }
+      firstname: { type: string }
+      lastname: { type: string }
 \end{lstlisting}
 \end{frame}
 
@@ -235,10 +231,8 @@ definitions:
     post:
       summary: Update user information.
       operationId: updateUser
-      consumes:
-        - "application/json"
-      produces:
-        - "application/json"
+      consumes: [ "application/json" ]
+      produces: [ "application/json" ]
       parameters:
         - in: path
           name: id
@@ -291,7 +285,7 @@ definitions:
 \end{lstlisting}
 
     \begin{block}{Assignment}
-        Use scripts \lstinline|build-{server,client}-*.sh| \\
+        Use scripts \lstinline|on-api-update.sh| \\
         after updating \lstinline{api.yaml} to invoke code generator.
     \end{block}
 \end{frame}
