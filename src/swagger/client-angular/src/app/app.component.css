@@ -1,18 +1,26 @@
+nav {
+    padding: 0;
+    margin: 0;
+}
+
 nav a {
-  padding: 5px 10px;
-  text-decoration: none;
-  margin-top: 10px;
-  display: inline-block;
-  background-color: #eee;
-  border-radius: 4px;
+    padding: 1ex 1em;
+    text-decoration: none;
+    margin: 0 1em 0 1em;
+    display: inline-block;
+    background-color: #9A5100;
+    border-radius: 0.5em 0.5em 0 0;
 }
+
 nav a:visited, a:link {
-  color: #607D8B;
+    color: white;
 }
+
 nav a:hover {
-  color: #039be5;
-  background-color: #CFD8DC;
+    color: black;
+    background-color: #FFB96B;
 }
+
 nav a.active {
-  color: #039be5;
+    color: #039be5;
 }
