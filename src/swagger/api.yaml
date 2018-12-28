@@ -1,4 +1,4 @@
-swagger: 2.0
+swagger: "2.0"
 info:
   description: Inventory database
   version: 1.0.0
