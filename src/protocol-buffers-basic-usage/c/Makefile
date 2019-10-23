@@ -44,4 +44,4 @@ example.cc: example.pb.h
 -include $(ALL_DD)
 
 %.dep: %.cc
-	$(CC) -MM -MT "$@ $(basename $@).o" -o $@ $<
+	$(CC) $(CC_OPTS) -MM -MT "$@ $(basename $@).o" -o $@ $<
