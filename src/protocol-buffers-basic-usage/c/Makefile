@@ -29,7 +29,7 @@ clean:
 	rm -f $(ALL_EX)
 
 example: example.o example.pb.o
-	$(LD) $(LD_OPTS) -o $@ $^
+	$(LD) $^ $(LD_OPTS) -o $@
 
 example.cc: example.pb.h
 
