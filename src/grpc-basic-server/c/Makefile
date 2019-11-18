@@ -31,10 +31,10 @@ clean:
 	rm -f $(ALL_EX)
 
 client: client.o example.pb.o example.grpc.pb.o
-	$(LD) $(LD_OPTS) -o $@ $^
+	$(LD) $^ $(LD_OPTS) -o $@
 
 server: server.o example.pb.o example.grpc.pb.o
-	$(LD) $(LD_OPTS) -o $@ $^
+	$(LD) $^ $(LD_OPTS) -o $@
 
 client.cc: example.pb.h example.grpc.pb.h
 
