@@ -62,7 +62,6 @@ paths:
         200:
           description: Successful operation
           schema:
-            type: object
             $ref: "#/definitions/User"
     post:
       x-swagger-router-controller: controllers.users
