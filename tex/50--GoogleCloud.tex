@@ -43,7 +43,7 @@
     Alice: pick $a$ and publish $g^a ~ (modulo ~ p)$ \\
     Bob: pick $b$ and publish $g^b ~ (modulo ~ p)$ \\
 
-    then $(g^a)^b = (g^b)^a$ is a shared secret \\ 
+    then $(g^a)^b = (g^b)^a$ is a shared secret \\
 
 \end{frame}
 
@@ -172,6 +172,31 @@ stub = AnExampleServiceStub (channel)
 \end{frame}
 
 
+\begin{frame}[fragile]{Certificate Generation}
+    \begin{block}{Self Signed}
+        Good for limited testing but nothing else !
+\begin{lstlisting}[language=bash,style=mini]
+> openssl req -newkey rsa -nodes -keyout server.key -x509 -out server.crt -days 666
+> openssl x509 -in server.crt -text
+> openssl rsa -in server.key -text
+\end{lstlisting}
+        \begin{itemize}
+            \item Create both a key and a certificate
+            \item Create RSA key with default size
+            \item Do not encrypt the RSA key file
+            \item Make the certificate self signed
+            \item Make the certificate valid for 666 days
+        \end{itemize}
+    \end{block}
+
+    \bigskip
+
+    \begin{block}{For Real Use}
+        See \url{https://www.letsencrypt.org} ...
+    \end{block}
+\end{frame}
+
+
 \section{Authorization}
 
 
@@ -272,6 +297,7 @@ stub = AnExampleServiceStub (channel)
 %     - gets back access token with expiration time and possibly refresh token
 % - Notable
 %   - The access token never passes through the browser
+%   - Only owner of client secret can convert authorization code to access code
 
 % Browser Applications
 % - Run in a browser so cannot have client secret in code

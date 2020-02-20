@@ -31,8 +31,4 @@ server = grpc.server (futures.ThreadPoolExecutor (max_workers = SERVER_THREAD_CO
 add_AnExampleServiceServicer_to_server (MyServicer (), server)
 server.add_insecure_port (SERVER_ADDR)
 server.start ()
-
-# Sleep to prevent server termination.
-
-while True:
-    time.sleep (1)
+server.wait_for_termination ()
