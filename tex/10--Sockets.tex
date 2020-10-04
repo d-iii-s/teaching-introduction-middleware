@@ -148,7 +148,7 @@ def server_time ():
 
 \begin{frame}[fragile]{Examples To Begin With ...}
 \begin{lstlisting}[language=bash,style=mini]
-> git clone http://github.com/D-iii-S/teaching-introduction-middleware.git
+> git clone http://github.com/d-iii-s/teaching-introduction-middleware.git
 \end{lstlisting}
     \begin{block}{C}
 \begin{lstlisting}[language=bash,style=mini]
@@ -227,26 +227,43 @@ output_stream.write (buffer.array ());
 \begin{frame}[fragile]{Python Marshalling}
     \begin{block}{Pickled Stream ?}
 \begin{lstlisting}[language=python,style=mini]
+import pickle
 with socket.makefile () as file_object:
     pickle.dump (..., file_object)
 \end{lstlisting}
     \end{block}
     \begin{block}{JSON Stream ?}
 \begin{lstlisting}[language=python,style=mini]
+import json
 with socket.makefile () as file_object:
     json.dump (..., file_object)
 \end{lstlisting}
     \end{block}
-    \begin{block}{Byte Stream ?}
+    \begin{block}{YAML Stream ?}
 \begin{lstlisting}[language=python,style=mini]
-data = 1234;
-socket.send (data.to_bytes (4, 'little'))
+import yaml
+with socket.makefile () as file_object:
+    yaml.dump (..., file_object)
 \end{lstlisting}
     \end{block}
 \end{frame}
 
 
-% TODO Python package struct ?
+\begin{frame}[fragile]{Python Marshalling}
+    \begin{block}{Byte Stream ?}
+\begin{lstlisting}[language=python,style=mini]
+data = 1234
+socket.send (data.to_bytes (4, 'little'))
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Byte Stream ?}
+\begin{lstlisting}[language=python,style=mini]
+from struct import *
+data = pack ('bhiq', 1, 2, 3, 4)
+socket.send (data)
+\end{lstlisting}
+    \end{block}
+\end{frame}
 
 
 \begin{frame}{Code Now ...}
@@ -270,6 +287,21 @@ socket.send (data.to_bytes (4, 'little'))
             \item Run any client with any server.
             \item Basic fields are enough (YYYY-MM-DD HH:MM:SS).
             \item Use sensible defaults for other fields (TZ, DOW, DOY).
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}{Submission}
+    \begin{block}{GitLab}
+        Use your personal GitLab repository under \\
+        \url{https://gitlab.mff.cuni.cz/teaching/nswi163/2020}.
+    \end{block}
+    \begin{block}{Requirements}
+        \begin{itemize}
+            \item Use assignment subdirectory.
+            \item Include build scripts and README with instructions.
+            \item Do not commit binaries or temporary build artifacts.
         \end{itemize}
     \end{block}
 \end{frame}
