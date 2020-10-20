@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from example_pb2 import *
 
 
