@@ -4,6 +4,18 @@
 \section{Technology Overview}
 
 
+% Selected Version History
+% - 3.12
+%     - Optional presence specifier for singular fields
+% - 3.6
+%     - Dropped support for certain older programming language versions
+% - 3.5
+%     - Unknown fields preserved by default and can be discarded explicitly
+% - 3.0
+%     - Unknown fields discarded
+%     - Required fields discarded
+
+
 \begin{frame}{Technology Overview}
     \begin{block}{Goals}
         Provide platform independent structured data serialization framework.
@@ -39,7 +51,7 @@
 
     \begin{block}{Source Distribution}
 \begin{lstlisting}[language=bash,style=mini]
-> git clone -b 3.10.x http://github.com/protocolbuffers/protobuf
+> git clone -b 3.13.x http://github.com/protocolbuffers/protobuf
 > cd protobuf
 > ./autogen.sh
 > ./configure --prefix=${HOME}/.local
@@ -58,7 +70,33 @@
 
 
 % Installation timing
+% - 2020 version 3.13 in lab ~4 minutes
 % - 2018 version 3.6 in lab ~4 minutes
+
+
+\begin{frame}[fragile]{Examples To Play With ...}
+\begin{lstlisting}[language=bash,style=mini]
+> git clone http://github.com/D-iii-S/teaching-introduction-middleware.git
+\end{lstlisting}
+    \begin{block}{C}
+\begin{lstlisting}[language=bash,style=mini]
+> cd teaching-introduction-middleware/src/protocol-buffers-basic-usage/c
+> cat README.md
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Java}
+\begin{lstlisting}[language=bash,style=mini]
+> cd teaching-introduction-middleware/src/protocol-buffers-basic-usage/java
+> cat README.md
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Python}
+\begin{lstlisting}[language=bash,style=mini]
+> cd teaching-introduction-middleware/src/protocol-buffers-basic-usage/python
+> cat README.md
+\end{lstlisting}
+    \end{block}
+\end{frame}
 
 
 \begin{frame}[fragile]{Message Specification Example}
@@ -79,18 +117,6 @@ message MoreExampleMessages {
 }
 \end{lstlisting}
 \end{frame}
-
-
-% Selected Version History
-% - 3.10
-%   - Up to here mostly internal changes
-% - 3.6
-%   - Dropped support for certain older programming language versions
-% - 3.5
-%   - Unknown fields preserved by default and can be discarded explicitly
-% - 3.0
-%   - Unknown fields discarded
-%   - Required fields discarded
 
 
 \section{Assignment Part I}
@@ -116,31 +142,6 @@ message MoreExampleMessages {
 
     \begin{block}{Interoperability}
         Implement compatible clients and servers in two languages.
-    \end{block}
-\end{frame}
-
-
-\begin{frame}[fragile]{Examples To Begin With ...}
-\begin{lstlisting}[language=bash,style=mini]
-> git clone http://github.com/D-iii-S/teaching-introduction-middleware.git
-\end{lstlisting}
-    \begin{block}{C}
-\begin{lstlisting}[language=bash,style=mini]
-> cd teaching-introduction-middleware/src/protocol-buffers-basic-usage/c
-> cat README.md
-\end{lstlisting}
-    \end{block}
-    \begin{block}{Java}
-\begin{lstlisting}[language=bash,style=mini]
-> cd teaching-introduction-middleware/src/protocol-buffers-basic-usage/java
-> cat README.md
-\end{lstlisting}
-    \end{block}
-    \begin{block}{Python}
-\begin{lstlisting}[language=bash,style=mini]
-> cd teaching-introduction-middleware/src/protocol-buffers-basic-usage/python
-> cat README.md
-\end{lstlisting}
     \end{block}
 \end{frame}
 
@@ -454,5 +455,20 @@ long nanoseconds = System.nanoTime ();
 import time
 nanoseconds = time.clock_gettime (time.CLOCK_MONOTONIC_RAW) * 1000000000
 \end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}{Submission}
+    \begin{block}{GitLab}
+        Use your personal GitLab repository under \\
+        \url{https://gitlab.mff.cuni.cz/teaching/nswi163/2020}.
+    \end{block}
+    \begin{block}{Requirements}
+        \begin{itemize}
+            \item Use assignment subdirectory.
+            \item Include build scripts and README with instructions.
+            \item Do not commit binaries or temporary build artifacts.
+        \end{itemize}
     \end{block}
 \end{frame}
