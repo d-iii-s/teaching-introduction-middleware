@@ -2,11 +2,7 @@
 __pycache__
 
 # Python virtual environment.
-pyvenv.cfg
-bin
-include
-lib
-lib64
+.venv
 
 # Generated files.
 example_pb2.py

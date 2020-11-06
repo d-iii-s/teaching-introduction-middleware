@@ -11,7 +11,7 @@ public class Client {
         // Create the channel used to connect to the server.
         io.grpc.ManagedChannel channel = io.grpc.ManagedChannelBuilder
             .forAddress (Shared.SERVER_ADDR, Shared.SERVER_PORT)
-            .usePlaintext (true)
+            .usePlaintext ()
             .build ();
 
         // Create a stub object that provides the service interface.

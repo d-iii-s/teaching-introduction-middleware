@@ -1,0 +1,2 @@
+protobuf >= 3.13
+grpcio >= 1.33

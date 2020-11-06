@@ -1,3 +1,8 @@
-.venv
+# Python compilation cache.
 __pycache__
+
+# Python virtual environment.
+.venv
+
+# Generated files.
 example_pb2.py

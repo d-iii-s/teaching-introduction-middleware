@@ -39,44 +39,9 @@
 \end{frame}
 
 
-\begin{frame}[fragile]{Installation}
-    \begin{block}{Fedora Packages}
-\begin{lstlisting}[language=bash,style=mini]
-> dnf install protobuf-devel
-> dnf install python3-protobuf
-\end{lstlisting}
-    \end{block}
-
-    \bigskip
-
-    \begin{block}{Source Distribution}
-\begin{lstlisting}[language=bash,style=mini]
-> git clone -b 3.13.x http://github.com/protocolbuffers/protobuf
-> cd protobuf
-> ./autogen.sh
-> ./configure --prefix=${HOME}/.local
-> make -j 8
-> make install
-> export PATH=${HOME}/.local/bin:${PATH}
-> export LD_LIBRARY_PATH=${HOME}/.local/lib:${LD_LIBRARY_PATH}
-> export PKG_CONFIG_PATH=${HOME}/.local/lib/pkgconfig:${PKG_CONFIG_PATH}
-\end{lstlisting}
-    \end{block}
-
-    \bigskip
-
-    \hfill ... use supplied install-protobuf.sh script
-\end{frame}
-
-
-% Installation timing
-% - 2020 version 3.13 in lab ~4 minutes
-% - 2018 version 3.6 in lab ~4 minutes
-
-
 \begin{frame}[fragile]{Examples To Play With ...}
 \begin{lstlisting}[language=bash,style=mini]
-> git clone http://github.com/D-iii-S/teaching-introduction-middleware.git
+> git clone http://github.com/d-iii-s/teaching-introduction-middleware.git
 \end{lstlisting}
     \begin{block}{C}
 \begin{lstlisting}[language=bash,style=mini]
