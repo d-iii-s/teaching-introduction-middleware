@@ -222,7 +222,7 @@ if (status.ok ()) {
 \begin{lstlisting}[language=java,style=mini]
 io.grpc.ManagedChannel channel = io.grpc.ManagedChannelBuilder
     .forAddress ("localhost", 8888)
-    .usePlaintext (true)
+    .usePlaintext ()
     .build ();
 \end{lstlisting}
     \end{block}

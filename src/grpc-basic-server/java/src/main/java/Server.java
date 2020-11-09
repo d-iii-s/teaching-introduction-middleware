@@ -28,7 +28,7 @@ public class Server {
         }
     }
 
-    public static void main (String [] args) {
+    public static void main (String [] args) throws Exception {
 
         // Create the server object.
         //
@@ -36,20 +36,15 @@ public class Server {
         // It needs to be told what service to provide
         // and what port to listen on.
 
-        try {
-            io.grpc.Server server = io.grpc.ServerBuilder
-                .forPort (Shared.SERVER_PORT)
-                .addService (new MyService ())
-                .build ()
-                .start ();
+        io.grpc.Server server = io.grpc.ServerBuilder
+            .forPort (Shared.SERVER_PORT)
+            .addService (new MyService ())
+            .build ()
+            .start ();
 
-            // The server is never asked to terminate in this example,
-            // it therefore waits here until interrupted from outside.
+        // The server is never asked to terminate in this example,
+        // it therefore waits here until interrupted from outside.
 
-            server.awaitTermination ();
-        }
-        catch (Exception e) {
-            System.out.println (e);
-        }
+        server.awaitTermination ();
     }
 }

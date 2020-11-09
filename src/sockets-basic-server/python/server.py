@@ -23,6 +23,8 @@ with socket.socket (socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                 data = client_socket.recv (SOCKET_BUFFER_SIZE)
                 if len (data) == 0:
                     break
+                # Note that send does not necessarily transfer all data.
+                # Return value says how many bytes were sent.
                 client_socket.send (data)
 
             print ('Client disconnected.')
