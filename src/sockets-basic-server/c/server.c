@@ -10,6 +10,15 @@ int main ()
     int server_socket = socket (AF_INET, SOCK_STREAM, 0);
     ASSERT (server_socket != -1, "Failed to create server socket object.");
 
+    // Set socket options.
+    //
+    // The SO_REUSEADDR option makes it possible to restart the server
+    // without waiting for the TIME_WAIT socket states to expire.
+
+    int reuseaddr_flag = true;
+    int setsockopt_status = setsockopt (server_socket, SOL_SOCKET, SO_REUSEADDR, &reuseaddr_flag, sizeof (reuseaddr_flag));
+    ASSERT (setsockopt_status == 0, "Failed to set server socket options.");
+
     // Bind socket to listen to constant port on all local interfaces.
     //
     // Note the need to use network order inside address fields.
