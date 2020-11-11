@@ -9,6 +9,10 @@ public class Server {
         // Create a server socket object and start listening for incoming connections.
         try (ServerSocket server_socket = new ServerSocket (Shared.SERVER_PORT)) {
 
+            // The SO_REUSEADDR option makes it possible to restart the server
+            // without waiting for the TIME_WAIT socket states to expire.
+            server_socket.setReuseAddress (true);
+
             System.out.println ("Waiting for incoming connection.");
 
             while (true) {
