@@ -6,7 +6,7 @@
 python -m venv .venv
 . .venv/bin/activate
 pip install -r requirements.txt
-protoc --plugin=protoc-gen-grpc=$(pkg-config --variable=prefix grpc++)/bin/grpc_python_plugin --python_out="." --grpc_out="." example.proto
+python -m grpc.tools.protoc --python_out="." --grpc_python_out="." --proto_path="." example.proto
 ./server.py &
 ./client.py
 ```
