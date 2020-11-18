@@ -4,6 +4,12 @@
 \section{Technology Overview}
 
 
+% Selected Version History
+% - 5.0.0
+%     - Multiple message types for different content marshalling
+%     - Lightweight thread support on current JDK versions
+
+
 \begin{frame}{Technology Overview}
     \begin{block}{Goals}
         Provide reliable group messaging mechanism.
@@ -78,24 +84,23 @@ public class UpdateEvent implements Serializable {
 \begin{lstlisting}[language=java,style=mini]
 public class JChannel implements Closeable {
     public JChannel ();
-    public JChannel (File file);
-    public JChannel (URL properties);
-    public JChannel (Element properties);
+    public JChannel (String properties);
+    public JChannel (InputStream configuration);
 
-    public void connect (String cluster_name);
-    public void disconnect ();
+    public JChannel connect (String cluster_name);
+    public JChannel disconnect ();
 
-    public void send (Message msg);
-    public void send (Address dst, byte [] buf);
-    public void send (Address dst, Object obj);
+    public JChannel send (Message msg);
+    public JChannel send (Address dst, Object obj);
+    public JChannel send (Address dst, byte [] buf);
 
-    public void setReceiver (Receiver r);
+    public JChannel setReceiver (Receiver r);
     public Receiver getReceiver ();
 
     public View getView ();
 
-    public void addChannelListener (ChannelListener listener);
-    public void removeChannelListener (ChannelListener listener);
+    public JChannel addChannelListener (ChannelListener listener);
+    public JChannel removeChannelListener (ChannelListener listener);
 
     ...
 }
@@ -103,23 +108,32 @@ public class JChannel implements Closeable {
 \end{frame}
 
 
-\begin{frame}[fragile]{Message Class}
+\begin{frame}[fragile]{Message Interface}
 \begin{lstlisting}[language=java,style=mini]
-public class Message ... {
-    public Message (Address dest);
-    public Message (Address dest, byte [] buf);
-    public Message (Address dest, Object obj);
-
+public interface Message {
     public Address getDest ();
     public Message setDest (Address new_dest);
     public Address getSrc ();
     public Message setSrc (Address new_src);
 
+    ...
+}
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{BytesMessage Class}
+\begin{lstlisting}[language=java,style=mini]
+public class BytesMessage implements Message {
+    public BytesMessage ();
+    public BytesMessage (Address dest);
+    public BytesMessage (Address dest, byte [] array);
+    public BytesMessage (Address dest, byte [] array, int offset, int length);
+
     public int getOffset ();
     public int getLength ();
-    public byte [] getBuffer ();
-    public Message setBuffer (byte[] b);
-    public Message setBuffer (byte[] b, int offset, int length);
+    public byte [] getArray ();
+    public BytesMessage setArray (byte [] b, int offset, int length);
 
     ...
 }
@@ -127,20 +141,35 @@ public class Message ... {
 \end{frame}
 
 
-\begin{frame}[fragile]{ReceiverAdapter Class}
+\begin{frame}[fragile]{ObjectMessage Class}
 \begin{lstlisting}[language=java,style=mini]
-public class ReceiverAdapter implements Receiver {
-    public void receive (Message msg);
-    public void receive (MessageBatch batch);
+public class ObjectMessage implements Message {
+    public ObjectMessage ();
+    public ObjectMessage (Address dest);
+    public ObjectMessage (Address dest, Object obj);
 
-    public void block ();
-    public void unblock ();
+    public <T extends Object> T getObject ();
+    public ObjectMessage setObject (Object obj);
 
-    public void getState (OutputStream output);
-    public void setState (InputStream input);
+    ...
+}
+\end{lstlisting}
+\end{frame}
 
-    public void suspect (Address mbr);
-    public void viewAccepted (View view);
+
+\begin{frame}[fragile]{Receiver Interface}
+\begin{lstlisting}[language=java,style=mini]
+public interface Receiver {
+    default void receive (Message msg);
+    default void receive (MessageBatch batch);
+
+    default void viewAccepted (View new_view);
+
+    default void block ();
+    default void unblock ();
+
+    default void setState (InputStream input);
+    default void getState (OutputStream output);
 }
 \end{lstlisting}
 \end{frame}
@@ -189,6 +218,21 @@ public class UpdateEvent implements Serializable {
         \begin{itemize}
             \item How would you go about measuring the cluster throughput~?
             \item Will the entire cluster see the same state~?
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}{Submission}
+    \begin{block}{GitLab}
+        Use your personal GitLab repository under \\
+        \url{https://gitlab.mff.cuni.cz/teaching/nswi163/2020}.
+    \end{block}
+    \begin{block}{Requirements}
+        \begin{itemize}
+            \item Use assignment subdirectory.
+            \item Include build scripts and README with instructions.
+            \item Do not commit binaries or temporary build artifacts.
         \end{itemize}
     \end{block}
 \end{frame}

@@ -1,8 +1,8 @@
-import org.jgroups.ReceiverAdapter;
+import org.jgroups.Receiver;
 import org.jgroups.Message;
 import org.jgroups.View;
 
-public class ReceiverEventHandler extends ReceiverAdapter {
+public class ReceiverEventHandler implements Receiver {
 
     public void viewAccepted (View view) {
         System.out.println ("New view contains " + view.size () + " members.");

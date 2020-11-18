@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
 import org.jgroups.JChannel;
-import org.jgroups.Message;
+import org.jgroups.ObjectMessage;
 
 public class Peer {
 
@@ -14,7 +14,7 @@ public class Peer {
             Scanner scanner = new Scanner (System.in);
             while (true) {
                 String line = scanner.nextLine ();
-                Message message = new Message (null, line);
+                ObjectMessage message = new ObjectMessage (null, line);
                 channel.send (message);
             }
         }
