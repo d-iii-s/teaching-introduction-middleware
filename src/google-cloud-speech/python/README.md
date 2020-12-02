@@ -7,8 +7,9 @@ Use for example http://www.voxforge.org. The service can accept WAV and FLAC fil
 ## Running the example
 
 ```
-> python -m virtualenv .
-> bin/pip install google-cloud-speech
-> export GOOGLE_APPLICATION_CREDENTIALS=/path/to/credentials.json
-> bin/python client.py /path/to/speech.wav
+python -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.txt
+export GOOGLE_APPLICATION_CREDENTIALS=/path/to/credentials.json
+./client.py /path/to/speech.wav
 ```

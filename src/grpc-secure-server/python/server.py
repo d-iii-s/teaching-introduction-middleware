@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import grpc
 import time
 
@@ -35,8 +37,4 @@ server = grpc.server (futures.ThreadPoolExecutor (max_workers = SERVER_THREAD_CO
 add_AnExampleServiceServicer_to_server (MyServicer (), server)
 server.add_secure_port (SERVER_ADDR, credentials)
 server.start ()
-
-# Sleep to prevent server termination.
-
-while True:
-    time.sleep (1)
+server.wait_for_termination ()

@@ -392,7 +392,7 @@ result = client.recognize (config, audio)
 
 \begin{frame}[fragile]{Cloud Translate API}
 \begin{lstlisting}[language=python,style=mini]
-from google.cloud import translate as google_cloud_translate
+from google.cloud import translate_v2 as google_cloud_translate
 
 client = google_cloud_translate.Client ()
 
@@ -423,5 +423,26 @@ result = client.translate ('some text', target_language = 'en')
 
     \begin{block}{Implementation}
         Use the client libraries rather than generated stub code.
+    \end{block}
+\end{frame}
+
+
+\begin{frame}{Submission}
+    \begin{block}{GitLab}
+        Use your personal GitLab repository under \\
+        \url{https://gitlab.mff.cuni.cz/teaching/nswi163/2020}.
+    \end{block}
+    \begin{block}{Requirements}
+        \begin{itemize}
+            \item Use assignment subdirectory.
+            \item Include build scripts and README with instructions.
+            \item Do not commit binaries or temporary build artifacts.
+        \end{itemize}
+    \end{block}
+    \begin{block}{Credentials}
+        \begin{itemize}
+            \item Do commit your self signed server certificate and key for Part I.
+            \item Do not commit your Google Cloud Access Token for Part II.
+        \end{itemize}
     \end{block}
 \end{frame}
