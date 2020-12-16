@@ -1,0 +1,126 @@
+openapi: 3.0.0
+info:
+  description: Inventory database
+  version: 1.0.0
+  title: Inventory
+  termsOfService: ''
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+paths:
+  /users:
+    get:
+      x-openapi-router-controller: controllers.users
+      summary: List all users
+      operationId: readUsers
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserBase'
+    post:
+      x-openapi-router-controller: controllers.users
+      summary: Create user
+      operationId: createUser
+      requestBody:
+        $ref: '#/components/requestBodies/User'
+      responses:
+        '201':
+          description: Created
+        '405':
+          description: Invalid input
+  '/users/{user_id}':
+    get:
+      x-openapi-router-controller: controllers.users
+      summary: Query user
+      operationId: readUser
+      parameters:
+        - in: path
+          name: user_id
+          description: User identifier
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    post:
+      x-openapi-router-controller: controllers.users
+      summary: Update user
+      operationId: updateUser
+      parameters:
+        - in: path
+          name: user_id
+          description: User identifier
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: '#/components/requestBodies/User'
+      responses:
+        '405':
+          description: Invalid input
+    delete:
+      x-openapi-router-controller: controllers.users
+      summary: Delete user
+      operationId: deleteUser
+      parameters:
+        - in: path
+          name: user_id
+          description: User identifier
+          required: true
+          schema:
+            type: integer
+      responses:
+        '400':
+          description: Invalid input
+servers:
+  - url: 'http://localhost:8080/v1'
+components:
+  requestBodies:
+    User:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+      description: User data
+      required: true
+  schemas:
+    UserBase:
+      type: object
+      properties:
+        id:
+          type: integer
+        firstname:
+          type: string
+          description: First name
+        lastname:
+          type: string
+          description: Last name
+    User:
+      allOf:
+        - $ref: '#/components/schemas/UserBase'
+        - type: object
+          properties:
+            mail:
+              type: string
+              description: Mail
+            homepage:
+              type: string
+              description: Homepage
+            department:
+              type: string
+              description: Department
+            phone:
+              type: array
+              items:
+                type: string
+              description: Phone numbers

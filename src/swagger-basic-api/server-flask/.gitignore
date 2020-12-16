@@ -1,0 +1,8 @@
+# Python compilation cache.
+__pycache__
+
+# Python virtual environment.
+/.venv
+
+# Generated files.
+/target

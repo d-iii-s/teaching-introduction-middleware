@@ -1,0 +1,135 @@
+swagger: "2.0"
+info:
+  description: Inventory database
+  version: 1.0.0
+  title: Inventory
+  termsOfService: ""
+  license:
+    name: Apache 2.0
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: localhost:8080
+basePath: /v1
+schemes:
+  - http
+paths:
+  /users:
+    get:
+      x-swagger-router-controller: controllers.users
+      summary: List all users
+      operationId: readUsers
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserBase"
+    post:
+      x-swagger-router-controller: controllers.users
+      summary: Create user
+      operationId: createUser
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: body
+          name: body
+          description: User data
+          required: true
+          schema:
+            $ref: "#/definitions/User"
+      responses:
+        201:
+          description: Created
+        405:
+          description: Invalid input
+  /users/{user_id}:
+    get:
+      x-swagger-router-controller: controllers.users
+      summary: Query user
+      operationId: readUser
+      parameters:
+        - in: path
+          name: user_id
+          description: User identifier
+          required: true
+          type: integer
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/User"
+    post:
+      x-swagger-router-controller: controllers.users
+      summary: Update user
+      operationId: updateUser
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: path
+          name: user_id
+          description: User identifier
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: User data
+          required: true
+          schema:
+            $ref: "#/definitions/User"
+      responses:
+        405:
+          description: Invalid input
+    delete:
+      x-swagger-router-controller: controllers.users
+      summary: Delete user
+      operationId: deleteUser
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user_id
+          description: User identifier
+          required: true
+          type: integer
+      responses:
+        400:
+          description: Invalid input
+definitions:
+  UserBase:
+    type: object
+    properties:
+      id:
+        type: integer
+      firstname:
+        type: string
+        description: First name
+      lastname:
+        type: string
+        description: Last name
+  User:
+    allOf:
+      - $ref: "#/definitions/UserBase"
+      - type: object
+        properties:
+          mail:
+            type: string
+            description: Mail
+          homepage:
+            type: string
+            description: Homepage
+          department:
+            type: string
+            description: Department
+          phone:
+            type: array
+            items:
+              type: string
+            description: Phone numbers

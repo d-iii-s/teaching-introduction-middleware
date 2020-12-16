@@ -1,0 +1,40 @@
+<h1>{{user.firstname}} {{user.lastname}}</h1>
+
+<table>
+<tr><th>First name</th><td>{{ user.firstname }}</td></tr>
+<tr><th>Last name</th><td>{{ user.lastname }}</td></tr>
+<tr><th>Department</th><td>{{ user.department }}</td></tr>
+<tr><th>Mail</th><td><code>{{ user.mail }}</code></td></tr>
+<tr><th>Phone</th><td><ul><li *ngFor="let phone of user.phone">{{ phone }}</li></ul></td></tr>
+<tr><th>Homepage</th><td><a href="{{ user.homepage }}">{{ user.homepage }}</a></td></tr>
+</table>
+
+<div *ngIf="user">
+<button *ngIf="!editing" (click)="editing = true" type="button">Edit</button>
+<div *ngIf="editing">
+
+<form (ngSubmit)="save ()">
+<fieldset>
+<legend>Edit a user</legend>
+<dl>
+  <dt><label for="user-first-name">First name:</label></dt>
+  <dd><input [(ngModel)]="user.firstname" id="user-first-name" name="first-name" placeholder="First name"/></dd>
+  <dt><label for="user-last-name">Last name:</label></dt>
+  <dd><input [(ngModel)]="user.lastname" id="user-last-name" name="last-name" placeholder="Last name"/></dd>
+  <dt><label for="user-department">Department:</label></dt>
+  <dd><input [(ngModel)]="user.department" id="user-department" name="department" placeholder="Department"/></dd>
+  <dt><label for="user-mail">Mail:</label></dt>
+  <dd><input [(ngModel)]="user.mail" id="user-mail" name="mail" placeholder="mail"/></dd>
+  <dt><label for="user-homepage">Homepage:</label></dt>
+  <dd><input [(ngModel)]="user.homepage" id="user-homepage" name="homepage" placeholder="http://www.example.com"/></dd>
+  <dt><button type="submit">Save</button></dt>
+</dl>
+</fieldset>
+</form>
+
+<form (ngSubmit)="delete ()">
+<button type="submit">Delete {{ user.firstname }} {{ user.lastname }}</button>
+</form>
+
+</div>
+</div>
