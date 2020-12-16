@@ -1,15 +1,31 @@
-.PHONY: all clean view-beams view-notes
+.PHONY: all clean
 
-all:
-	latexmk -lualatex Course-Beams.tex
-	latexmk -lualatex Course-Notes.tex
+COMPONENTS = $(basename $(wildcard [0-9][0-9]*.tex))
+ALL_BEAMERS = $(addsuffix -beamer.pdf, $(COMPONENTS))
+ALL_ARTICLES = $(addsuffix -article.pdf, $(COMPONENTS))
+VIEW_BEAMERS = $(addprefix view-, $(ALL_BEAMERS))
+VIEW_ARTICLES = $(addprefix view-, $(ALL_ARTICLES))
+
+.PHONY: $(VIEW_BEAMERS) $(VIEW_ARTICLES)
+
+LATEXMK_VIEW = -pvc -new-viewer -interaction=nonstopmode
+LATEXMK_BEAMER = -usepretex -pretex="\def\dobeamer{}" -lualatex -jobname=%A-beamer
+LATEXMK_ARTICLE = -usepretex -pretex="\def\doarticle{}" -lualatex -jobname=%A-article
+
+all: $(ALL_BEAMERS) $(ALL_ARTICLES)
 
 clean:
-	latexmk -c -lualatex Course-Beams.tex
-	latexmk -c -lualatex Course-Notes.tex
+	rm -f $(addsuffix .*, $(basename $(ALL_BEAMERS)))
+	rm -f $(addsuffix .*, $(basename $(ALL_ARTICLES)))
 
-view-beams:
-	latexmk -pvc -lualatex -interaction=nonstopmode Course-Beams.tex
+%-beamer.pdf: %.tex
+	latexmk $(LATEXMK_BEAMER) $<
 
-view-notes:
-	latexmk -pvc -lualatex -interaction=nonstopmode Course-Notes.tex
+%-article.pdf: %.tex
+	latexmk $(LATEXMK_ARTICLE) $<
+
+$(VIEW_BEAMERS): view-%-beamer.pdf: %.tex
+	latexmk $(LATEXMK_VIEW) $(LATEXMK_BEAMER) $<
+
+$(VIEW_ARTICLES): view-%-article.pdf: %.tex
+	latexmk $(LATEXMK_VIEW) $(LATEXMK_ARTICLE) $<

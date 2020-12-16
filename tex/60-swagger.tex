@@ -1,5 +1,9 @@
-\part{Swagger: REST API Generation}
+\RequirePackage{slides-shared}
+\title{Swagger: REST API Generation}
 
+\begin{document}
+
+\makepreamble
 
 \section{Technology Overview}
 
@@ -21,10 +25,11 @@
     \medskip
 
     \begin{itemize}
-        \item Add new person with POST at \url{http://example.com/person/add}
-        \item Get person info with GET at \url{http://example.com/person/42}
-        \item Update person info with POST at \url{http://example.com/person/42}
-        \item Delete person info with DELETE at \url{http://example.com/person/42}
+        \item List people with GET at \url{http://example.com/people}
+        \item Add new person with POST at \url{http://example.com/people}
+        \item Get person info with GET at \url{http://example.com/people/42}
+        \item Update person info with POST at \url{http://example.com/people/42}
+        \item Delete person info with DELETE at \url{http://example.com/people/42}
     \end{itemize}
 
 \end{frame}
@@ -101,7 +106,7 @@
 \begin{frame}{Swagger: API Development for REST}
     \begin{block}{Interface Description}
         \begin{description}
-            \item[URLs] to identify data model classes
+            \item[Paths] to identify data model classes
             \item[Actions] to operate on class instances
             \item[Attributes] with types to describe class instances
             \item[Security] defines access rules
@@ -114,12 +119,13 @@
     \begin{itemize}
         \item Code generation
         \begin{itemize}
-            \item Stubs wrap communication in language or framework specific constructs
-            \item RPC style with futures for client
-            \item Callback style for server
-            \item Over 80 targets supported
+            \item Client libraries
+            \item Server stubs
+            \item Documentation
+            \item Miscellaneous
         \end{itemize}
-        \item Editor at \url{http://editor.swagger.io}.
+        \item Editor at \url{http://editor.swagger.io}
+        \item Development environment at \url{http://app.swaggerhub.com}
     \end{itemize}
 \end{frame}
 
@@ -156,10 +162,10 @@
 
 \begin{frame}[fragile]{Assignment Interface: Prologue}
 \begin{lstlisting}[language=yaml,style=mini]
-swagger: 2.0
+swagger: "2.0"
 
 info:
-  description: Inventory database service
+  description: Inventory database
   version: 1.0.0
   title: Inventory
   termsOfService: ""
@@ -167,13 +173,14 @@ info:
     name: Apache 2.0
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 
-host: localhost:8080 /@ \alert{\# Simplifies usage of generated code} @/
+host: localhost:8080 /@ \hfill \# Simplifies usage of generated code @/
 
-basePath: /v1 /@ \alert{\# Version your API from the beginning} @/
+basePath: /v1 /@ \hfill \# Version the API from the start @/
 
 schemes:
-  - http /@ \alert{\# For testing only, hide behind SSL proxy in production (and do} @/
-         /@ \alert{\# not forget about CORS (Access-Control-Allow-Origin) etc.)} @/
+  - http /@ \hfill \# Production should use TLS @/
+
+basePath: /v1
 \end{lstlisting}
 \end{frame}
 
@@ -183,45 +190,47 @@ schemes:
 paths:
   /users:
     get:
-      operationId: readUsers /@ \alert{\# Callback/stub name in your code} @/
+      summary: List all users
+      operationId: readUsers /@ \hfill \# Operation name in code @/
       produces: [ "application/json" ]
-      responses: /@ \alert{\# HTTP status codes} @/
+      responses:
         200:
+          description: Success
           schema:
             type: array
             items:
               $ref: "#/definitions/UserBase"
 
 definitions:
-  UserBase: /@ \alert{\# Class in the generated code} @/
+  UserBase:
     type: object
     properties:
       id: { type: integer }
-      firstname: { type: string }
-      lastname: { type: string }
+      firstname: { type: string, description: First name }
+      lastname: { type: string, description: Last name }
 \end{lstlisting}
 \end{frame}
 
 
 \begin{frame}[fragile]{Assignment Interface: Querying User Data}
 \begin{lstlisting}[language=yaml,style=mini]
-  /user/{id}:
+paths:
+  /users/{user_id}:
     get:
-      summary: Query user information.
+      summary: Query user
       operationId: readUser
       parameters:
         - in: path
-          name: id
-          description: ID of the user.
+          name: user_id
+          description: User identifier
           required: true
           type: integer
       produces:
         - "application/json"
       responses:
         200:
-          description: Successful operation
+          description: Success
           schema:
-            type: object
             $ref: "#/definitions/User"
 \end{lstlisting}
 \end{frame}
@@ -229,20 +238,22 @@ definitions:
 
 \begin{frame}[fragile]{Assignment Interface: Updating User Data}
 \begin{lstlisting}[language=yaml,style=mini]
+paths:
+  /users/{user_id}:
     post:
-      summary: Update user information.
+      summary: Update user
       operationId: updateUser
       consumes: [ "application/json" ]
       produces: [ "application/json" ]
       parameters:
         - in: path
-          name: id
-          description: ID of the user.
+          name: user_id
+          description: User identifier
           required: true
           type: integer
         - in: body
           name: body
-          description: Updated data.
+          description: User data
           required: true
           schema:
             $ref: "#/definitions/User"
@@ -256,303 +267,74 @@ definitions:
 \begin{frame}[fragile]{Assignment Interface: Inheritance}
 \begin{lstlisting}[language=yaml,style=mini]
 definitions:
-  UserBase:  /@ \alert{\# Used in listings} @/
+  UserBase:
     type: object
     properties:
-      id:
-        type: integer
-      firstname:
-        type: string
-      lastname:
-        type: string
-      email:
-        type: string
-  User:  /@ \alert{\# Detailed information} @/
+      id: { type: integer }
+      firstname: { type: string, description: First name }
+      lastname: { type: string, description: Last name }
+  User:
     allOf:
       - $ref: "#/definitions/UserBase"
       - type: object
         properties:
-          homepage:
-            type: string
-          department:
-            type: string
+          mail: { type: string, description: Mail }
+          homepage: { type: string, description: Homepage }
+          department: { type: string, description: Department }
+          phone:
+            type: array
+            items:
+              type: string
+            description: Phone numbers
 \end{lstlisting}
 \end{frame}
 
 
-\begin{frame}[fragile]{Code Generation}
-\begin{lstlisting}[language=bash,style=mini]
-swagger-codegen generate -i api.yaml -o <path> -l <framework>
-\end{lstlisting}
-
-    \begin{block}{Assignment}
-        The \lstinline|fetch.sh| fetches the code generator JAR. \\
-        ~\\
-        Use \lstinline|on-api-update.sh| scripts after updating
-        \lstinline{api.yaml} to invoke the code generator.
-    \end{block}
+\begin{frame}{Code Now ...}
+    \commitstrip{http://www.commitstrip.com/en/2016/08/25/a-very-comprehensive-and-precise-spec}{spec-is-code}{0.6}
 \end{frame}
 
 
-\begin{frame}{Flask-based and Spring-based Servers}
-    \begin{block}{Flask (Python)}
+\begin{frame}{Assignment Details}
+    \begin{block}{Interface}
+        Extend with operations and definitions related to assets.
         \begin{itemize}
-            \item microframework
-            \item routing, sessions, templates \ldots
-            \item but no databases, form validation \ldots
+            \item Same operations as already exist for users
+            \item Additionally querying assets per user
         \end{itemize}
     \end{block}
-    \begin{block}{Spring (Java)}
+
+    \medskip
+
+    \begin{block}{Server}
+        Pick one and extend it with asset related operations.
+    \end{block}
+
+    \medskip
+
+    \begin{block}{Client}
+        Pick one and extend it as suggested.
         \begin{itemize}
-            \item application framework for everything :-)
-            \item example uses Boot to simplify configuration
-        \end{itemize}
-    \end{block}
-    \begin{block}{General}
-        \begin{itemize}
-            \item No real database (data kept in memory)
-            \item Data dump to JSON at termination for debugging
-            \item See \lstinline{README} for instructions how to run
-        \end{itemize}
-    \end{block}
-\end{frame}
-
-
-\begin{frame}[fragile]{Flask-based Server}
-\begin{block}{\lstinline{swagger\_server/controllers/default\_controller.py}}
-\begin{lstlisting}[language=python,style=mini]
-def create_user(body):  # noqa: E501
-    """Creates a new user.
-
-    :param body: User to be added.
-    :type body: dict | bytes
-
-    :rtype: None
-    """
-    if connexion.request.is_json:
-        body = User.from_dict(connexion.request.get_json())
-    return 'do some magic!'
-\end{lstlisting}
-\end{block}
-
-    \begin{block}{\lstinline{controllers/users.py}}
-        Actual implementation with data kept in memory.
-    \end{block}
-\end{frame}
-
-
-\begin{frame}[fragile]{Spring-based Server}
-    \begin{block}{\lstinline{src/gen/java/io/swagger/api/UsersApiController.java}}
-\begin{lstlisting}[language=java,style=mini]
-public ResponseEntity<Void> createUser (
-    @ApiParam (value = "User to be added." ,required=true)
-    @Valid
-    @RequestBody
-    User body)
-{
-    String accept = request.getHeader("Accept");
-    return new ResponseEntity<Void> (HttpStatus.NOT_IMPLEMENTED);
-}
-\end{lstlisting}
-    \end{block}
-
-    \begin{block}{\lstinline{src/main/java/io/swagger/api/UsersApiController.java}}
-        Actual implementation with data kept in memory.
-    \end{block}
-\end{frame}
-
-\begin{frame}{Clients}
-    \begin{block}{General}
-        \begin{itemize}
-            \item Wraps the HTTP communication
-            \item Provides classes for individual definitions (model)
-            \item Often future-based communication
-            \item Generated code is used as a library
-        \end{itemize}
-    \end{block}
-    \begin{block}{Assignment}
-        \begin{itemize}
-            \item Angular -- web UI front-end to the server
-            \item Bash -- scriptable command-line access to the server
-            \item R -- data processing communication directly with the server
-        \end{itemize}
-    \end{block}
-\end{frame}
-
-\begin{frame}{Angular-based Client}
-    \begin{block}{Assignment}
-        Add interface components for listing complete inventory. \\
-        Extend user detail page with asset list.
-    \end{block}
-
-    \begin{block}{General}
-        \begin{itemize}
-            \item Sources are under \lstinline{src/app}
-            \item \lstinline{*.component.html} contains web page snippets of the component
-            \item \lstinline{*.component.ts} contains TypeScript implementation of the component
+            \item Angular: All asset operations and per user listing
+            \item bash: Population and per user asset listing
+            \item R: Plot average asset cost per department
         \end{itemize}
     \end{block}
 \end{frame}
 
 
-\begin{frame}{Angular-based Client}
-    \begin{block}{\lstinline{app-routing.module.ts}}
+\begin{frame}{Submission}
+    \begin{block}{GitLab}
+        Use your personal GitLab repository under \\
+        \url{https://gitlab.mff.cuni.cz/teaching/nswi163/2020}.
+    \end{block}
+    \begin{block}{Requirements}
         \begin{itemize}
-            \item Import all your components
-            \item Add new routes to \lstinline{routes}
+            \item Use assignment subdirectory.
+            \item Include build scripts and README with instructions.
+            \item Do not commit binaries or temporary build artifacts.
         \end{itemize}
     \end{block}
-
-    \begin{block}{\lstinline{app.component.html}}
-        \begin{itemize}
-            \item Items in the topbar
-        \end{itemize}
-    \end{block}
 \end{frame}
 
-
-\begin{frame}[fragile]{Angular-based Client: Reading Server Data}
-    \begin{block}{\lstinline{users/users.component.ts}}
-\begin{lstlisting}[language=typescript,style=mini]
-export class UsersComponent implements OnInit {
-    users: User [];
-
-    constructor (private api: DefaultService) {}
-
-    ngOnInit () {
-        this.api.readUsers ().subscribe (u => this.users = u);
-    }
-}
-\end{lstlisting}
-    \end{block}
-
-    \begin{block}{\lstinline{users/users.component.html}}
-\begin{lstlisting}[language=html,style=mini]
-<ul>
-    <li *ngFor="let user of users">
-        <a routerLink="/user/{{user.id}}">{{user.lastname}}, {{user.firstname}}</a>
-    </li>
-</ul>
-\end{lstlisting}
-    \end{block}
-\end{frame}
-
-
-\begin{frame}[fragile]{Angular-based Application: Writing Server Data}
-    \begin{block}{\lstinline{users/user.component.html}}
-\begin{lstlisting}[language=html,style=mini]
-<form (ngSubmit)="save();">
-    <label for="user-first-name">First name:</label>
-    <input [(ngModel)]="user.firstname" id="user-first-name" />
-    ...
-    <button type="submit">Save</button>
-</form>
-\end{lstlisting}
-    \end{block}
-
-    \begin{block}{\lstinline{users/user.component.ts}}
-\begin{lstlisting}[language=typescript,style=mini]
-export class UserComponent {
-    save (): void {
-        const id = +this.route.snapshot.paramMap.get ('id');
-        this.api.updateUser (id, this.user).subscribe ();
-    }
-}
-\end{lstlisting}
-    \end{block}
-\end{frame}
-
-
-\begin{frame}[fragile]{Bash client: Overview}
-    \begin{block}{Generated}
-        The generated script \lstinline{client.sh} is a thin wrapper on top of \lstinline{curl} doing the actual requests. Useful to check that the server works as expected.
-    \end{block}
-
-    \begin{block}{\lstinline{make-check-lists} and \lstinline{add-employees.sh}}
-
-        Downloads list of employees, creates printable version of the inventory.
-
-        Reads employee list from a CSV, adds them to the database.
-    \end{block}
-
-    \begin{block}{Assignment}
-        Extend the \lstinline{make-check-lists} to include assets listing and create a similar script for adding assets.
-
-\begin{lstlisting}
-asset,price,acquired,owner
-Magic Wand,42,2017,harry.potter@example.com
-...
-\end{lstlisting}
-    \end{block}
-\end{frame}
-
-
-\begin{frame}[fragile]{Bash client: Usage}
-\begin{lstlisting}[language=bash]
-> ./client.sh --silent readUsers | json_reformat
-
-> ./client.sh --silent readUser id=1
-
-> ./client.sh createUser \
-    firstname==Horatio lastname==Hornblower \
-    email==horatio.hornblower@royalnavy.mod.uk \
-    department==Navy \
-    homepage==https://www.royalnavy.mod.uk/hornblower
-\end{lstlisting}
-\end{frame}
-
-
-\begin{frame}[fragile]{R client: Overview}
-    \begin{block}{\lstinline{dept-plot.r}}
-        Draws a barplot showing number of employees in each department.
-    \end{block}
-
-    \begin{block}{Assignment}
-        Create a similar script that will show total price of
-        assets across departments and for each employee.
-    \end{block}
-\end{frame}
-
-
-\begin{frame}[fragile]{\lstinline{dept-plot.r}}
-\begin{lstlisting}[language=r,style=mini]
-source ("init.r")
-
-api <- DefaultApi$new ()
-
-all.users.id <- api$read_users ()$content$id
-
-department.people.count <- list ()
-
-for (i in all.users.id) {
-    u <- api$read_user (i)$content
-    dept <- u$department
-    if (!(dept %in% names (department.people.count))) {
-        department.people.count [[ dept ]] <- 0
-    }
-
-    department.people.count [[ dept ]] <- department.people.count [[ dept ]] + 1
-}
-
-barplot (unlist (department.people.count), main="Employee count per department")
-\end{lstlisting}
-\end{frame}
-
-
-% http://www.commitstrip.com/en/2016/08/25/a-very-comprehensive-and-precise-spec
-
-
-\begin{frame}{Assignment Summary}
-    \begin{itemize}
-        \item Extend \lstinline{api.yaml} with assets-related operations and data definitions
-        \item Extend one of the servers (Flask or Spring)
-            \begin{itemize}
-                \item Implement all CRUD operations and listing (all and per-user)
-            \end{itemize}
-        \item Extend one of the clients (Angular or R and bash)
-            \begin{itemize}
-                \item Angular: allow all of CRUD operations on assets and per-user listing
-                \item R and bash: asset adding script, printable version of asset listing and two plotting scripts
-            \end{itemize}
-    \end{itemize}
-\end{frame}
+\end{document}
