@@ -17,7 +17,7 @@ user_data = {}
 
 def read_users ():
     global user_data
-    return user_data, HTTPStatus.OK.value, CORS
+    return list (user_data.values ()), HTTPStatus.OK.value, CORS
 
 def create_user (body):
     global user_last_id
