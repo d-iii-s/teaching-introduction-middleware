@@ -402,40 +402,14 @@ AnExampleMessage.FromString (file.read ())
 \end{frame}
 
 
-\begin{frame}[fragile]{Measuring Time}
-    \begin{block}{C++}
-\begin{lstlisting}[language=c,style=mini]
-#include <time.h>
-#include <stdint.h>
-struct timespec time;
-clock_gettime (CLOCK_MONOTONIC_RAW, &time);
-uint64_t nanoseconds =
-    (uint64_t) time.tv_sec * 1000000000 +
-    (uint64_t) time.tv_nsec;
-\end{lstlisting}
-    \end{block}
-    \begin{block}{Java}
-\begin{lstlisting}[language=java,style=mini]
-long nanoseconds = System.nanoTime ();
-\end{lstlisting}
-    \end{block}
-    \begin{block}{Python}
-\begin{lstlisting}[language=python,style=mini]
-import time
-nanoseconds = time.clock_gettime (time.CLOCK_MONOTONIC_RAW) * 1000000000
-\end{lstlisting}
-    \end{block}
-\end{frame}
-
-
 \begin{frame}{Submission}
     \begin{block}{GitLab}
         Use your personal GitLab repository under \\
-        \url{https://gitlab.mff.cuni.cz/teaching/nswi163/2020}.
+        \url{https://gitlab.mff.cuni.cz/teaching/nswi163/2021}.
     \end{block}
     \begin{block}{Requirements}
         \begin{itemize}
-            \item Use assignment subdirectory.
+            \item Use the assignment subdirectory.
             \item Include build scripts and README with instructions.
             \item Do not commit binaries or temporary build artifacts.
         \end{itemize}

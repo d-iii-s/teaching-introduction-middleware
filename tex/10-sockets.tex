@@ -98,6 +98,34 @@ Close (client_socket);
         \begin{itemize}
             \item Connect to the server described above.
             \item Query information on current time.
+            \item Print the time.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}{Code Now ...}
+    \commitstrip{http://www.commitstrip.com/en/2016/06/07/good-code}{good-code}{0.6}
+\end{frame}
+
+
+\section{Assignment Part II}
+
+
+\begin{frame}{Assignment}
+    \begin{block}{Server}
+        Implement a server that will provide information on current time.
+        \begin{itemize}
+            \item The server should accept a spec of what fields to return.
+            \item Fields should be standard YYYY-MM-DD HH:MM:SS.
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Client}
+        Implement a client that will query server time:
+        \begin{itemize}
+            \item Pick a random combination of fields.
+            \item Query information on current time.
             \item Wrap all this in a local function.
             \item Print the time.
         \end{itemize}
@@ -270,40 +298,67 @@ socket.send (data)
 \end{frame}
 
 
-\begin{frame}{Code Now ...}
-    \commitstrip{http://www.commitstrip.com/en/2016/06/07/good-code}{good-code}{0.6}
-\end{frame}
-
-
-\section{Assignment Part II}
+\section{Assignment Part III}
 
 
 \begin{frame}{Assignment}
-    \begin{block}{Languages}
-        Implement Part I in at least two programming languages.
+    \begin{block}{Interoperability}
+        Implement compatible clients and servers in two languages.
     \end{block}
 
-    \bigskip
+    \begin{block}{Performance}
+        Measure the performance of your implementation.
+    \end{block}
 
-    \begin{block}{Interoperability}
-        Make sure your clients and servers in both languages \\ are interchangeable:
+    \begin{block}{Experiment Design}
+        Stick to the following, or provide arguments for why not:
         \begin{itemize}
-            \item Run any client with any server.
-            \item Basic fields are enough (YYYY-MM-DD HH:MM:SS).
-            \item Use sensible defaults for other fields (TZ, DOW, DOY).
+            \item Random field mix, each field with probability 1/2.
+            \item Measure at least two minutes long traffic.
+            \item Report average invocation throughput.
+            \item No printing during measurement.
         \end{itemize}
     \end{block}
 \end{frame}
 
 
+\begin{frame}[fragile]{Measuring Time}
+    \begin{block}{C++}
+\begin{lstlisting}[language=c,style=mini]
+#include <time.h>
+#include <stdint.h>
+struct timespec time;
+clock_gettime (CLOCK_MONOTONIC_RAW, &time);
+uint64_t nanoseconds =
+    (uint64_t) time.tv_sec * 1000000000 +
+    (uint64_t) time.tv_nsec;
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Java}
+\begin{lstlisting}[language=java,style=mini]
+long nanoseconds = System.nanoTime ();
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Python}
+\begin{lstlisting}[language=python,style=mini]
+import time
+nanoseconds = time.clock_gettime (time.CLOCK_MONOTONIC_RAW) * 1000000000
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
+
+
+
 \begin{frame}{Submission}
     \begin{block}{GitLab}
         Use your personal GitLab repository under \\
-        \url{https://gitlab.mff.cuni.cz/teaching/nswi163/2020}.
+        \url{https://gitlab.mff.cuni.cz/teaching/nswi163/2021}.
     \end{block}
     \begin{block}{Requirements}
         \begin{itemize}
-            \item Use assignment subdirectory.
+            \item Use the assignment subdirectory.
             \item Include build scripts and README with instructions.
             \item Do not commit binaries or temporary build artifacts.
         \end{itemize}
