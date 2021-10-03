@@ -1,4 +1,4 @@
-# JGroups Based Peer
+# JGroups Basic Peer
 
 ## Running the example
 

@@ -7,4 +7,4 @@ python -m venv .venv
 pip install -r target/requirements.txt
 pip install connexion[swagger-ui]
 
-PYTHONPATH=.:target python -m swagger_server
+PYTHONPATH=.:target python -m openapi_server

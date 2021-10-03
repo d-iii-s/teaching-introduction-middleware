@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>d3s</groupId>
-    <artifactId>jgroups-based-peer</artifactId>
+    <artifactId>jgroups-basic-peer</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
@@ -15,7 +15,7 @@
         <dependency>
             <groupId>org.jgroups</groupId>
             <artifactId>jgroups</artifactId>
-            <version>5.0.0.Final</version>
+            <version>5.1.6.Final</version>
         </dependency>
     </dependencies>
 

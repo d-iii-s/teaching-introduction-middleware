@@ -1,7 +1,7 @@
 import connexion
 
 from http import HTTPStatus
-from swagger_server.models.user import User
+from openapi_server.models.user import User
 
 
 # Permissive CORS header to be added to responses.
