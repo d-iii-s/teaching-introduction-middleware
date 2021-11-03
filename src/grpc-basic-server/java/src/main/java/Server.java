@@ -13,11 +13,18 @@ public class Server {
     static class MyService extends AnExampleServiceGrpc.AnExampleServiceImplBase {
 
         @Override
-        public void cloneMessage (AnExampleMessage message, io.grpc.stub.StreamObserver<MoreExampleMessages> responseObserver) {
+        public void cloneMessage (AnExampleMessage request, io.grpc.stub.StreamObserver<MoreExampleMessages> responseObserver) {
+
+            // Print the input.
+
+            System.out.println ("gRPC server in Java cloning:");
+            System.out.println (request.toString ());
+
+            // Create the response by copying the request twice.
 
             MoreExampleMessages response = MoreExampleMessages.newBuilder ()
-                .addMessages (message)
-                .addMessages (message)
+                .addMessages (request)
+                .addMessages (request)
                 .build ();
 
             // Responses are returned through observer interface.
@@ -28,7 +35,7 @@ public class Server {
         }
     }
 
-    public static void main (String [] args) throws Exception {
+    public static void main (String [] args) {
 
         // Create the server object.
         //
@@ -36,15 +43,20 @@ public class Server {
         // It needs to be told what service to provide
         // and what port to listen on.
 
-        io.grpc.Server server = io.grpc.ServerBuilder
-            .forPort (Shared.SERVER_PORT)
-            .addService (new MyService ())
-            .build ()
-            .start ();
+        try {
+            io.grpc.Server server = io.grpc.ServerBuilder
+                .forPort (Shared.SERVER_PORT)
+                .addService (new MyService ())
+                .build ()
+                .start ();
 
-        // The server is never asked to terminate in this example,
-        // it therefore waits here until interrupted from outside.
+            // The server is never asked to terminate in this example,
+            // it therefore waits here until interrupted from outside.
 
-        server.awaitTermination ();
+            server.awaitTermination ();
+        }
+        catch (Exception e) {
+            System.out.println (e);
+        }
     }
 }

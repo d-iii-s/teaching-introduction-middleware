@@ -18,7 +18,7 @@ with grpc.secure_channel (SERVER_ADDR, credentials) as channel:
 
     message = AnExampleMessage ()
     message.some_integer = 0xDEAD
-    message.some_string = 'Hello gRPC !'
+    message.some_string = 'Hello from gRPC in Python !'
     print ('Message:')
     print (message)
 

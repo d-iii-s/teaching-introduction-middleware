@@ -20,7 +20,7 @@ int main ()
 
     AnExampleMessage message;
     message.set_some_integer (0xDEAD);
-    message.set_some_string ("Hello gRPC !");
+    message.set_some_string ("Hello from gRPC in C++ !");
     std::cout << "Message:" << std::endl;
     std::cout << message.DebugString () << std::endl;
 

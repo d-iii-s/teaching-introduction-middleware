@@ -17,6 +17,12 @@ from example_pb2_grpc import *
 
 class MyServicer (AnExampleServiceServicer):
     def CloneMessage (self, request, context):
+
+        # Print the input.
+        print ('gRPC server in Python cloning:')
+        print (request)
+
+        # Create the response by copying the request twice.
         response = MoreExampleMessages ()
         response.messages.add ().CopyFrom (request)
         response.messages.add ().CopyFrom (request)
