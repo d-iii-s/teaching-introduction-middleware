@@ -15,7 +15,7 @@
         <dependency>
             <groupId>org.jgroups</groupId>
             <artifactId>jgroups</artifactId>
-            <version>5.1.6.Final</version>
+            <version>5.1.9.Final</version>
         </dependency>
     </dependencies>
 
@@ -32,8 +32,21 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.6.0</version>
+                <executions>
+                    <execution>
+                        <id>peer</id>
+                        <configuration>
+                            <mainClass>Peer</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>demo</id>
+                        <configuration>
+                            <mainClass>org.jgroups.demos.Draw</mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
                 <configuration>
-                    <mainClass>Peer</mainClass>
                     <!-- Force loopback use for demonstration. -->
                     <systemProperties>
                         <systemProperty>
