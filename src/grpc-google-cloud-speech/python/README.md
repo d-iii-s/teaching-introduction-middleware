@@ -16,3 +16,5 @@ make OUTPUT=.. LANGUAGE=python GRPCPLUGIN=$(pkg-config --variable=prefix grpc++)
 cd ..
 ./client.py /path/to/speech.wav
 ```
+
+You may need to add `FLAGS += --experimental_allow_proto3_optional` to the Google APIs `Makefile`.

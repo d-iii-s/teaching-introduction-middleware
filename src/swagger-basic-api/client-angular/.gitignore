@@ -1,8 +1,0 @@
-# Node packages.
-/node_modules
-
-# Generated files.
-/src/app/backend
-
-# Versioning files.
-/package-lock.json

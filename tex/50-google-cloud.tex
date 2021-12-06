@@ -64,9 +64,9 @@
         \begin{itemize}
             \item Ciper suite negotiation
             \begin{itemize}
-                \item Key exchange (RSA, DHE, PSK ...)
-                \item Encryption (AES GCM, AES CCM, AES CBC ...)
-                \item Message authentication (MD5, SHA1, SHA256 ...)
+                \item Key exchange (\cancel{RSA}, DHE, PSK ...)
+                \item Encryption (AES GCM, \cancel{AES CCM}, \cancel{AES CBC} ...)
+                \item Message authentication (\cancel{MD5}, \cancel{SHA1}, SHA256 ...)
             \end{itemize}
             \item Secure session key exchange
             \item Server authentication
@@ -75,11 +75,11 @@
         \end{itemize}
     \end{block}
 
-    \hfill ... TLS 1.2 RFC 5246
+    \hfill ... TLS 1.3 RFC 8446
 \end{frame}
 
 
-\begin{frame}[fragile]{TLS RSA Handshake Sketch}
+\begin{frame}[fragile]{TLS 1.2 RSA Handshake Sketch}
 \begin{lstlisting}[style=mini]
 [CLT] Hello, I support these cipher suites,
       and here is my CLIENT RANDOM number
@@ -93,33 +93,31 @@
 MASTER SECRET = function (PRE MASTER SECRET, CLIENT RANDOM, SERVER RANDOM)
 various session keys = function (MASTER SECRET)
 
-[CLT] Finished and here is encrypted hash of exchanged messages
+[CLT] I am finished and here is encrypted hash of exchanged messages
 
-[SRV] Finished and here is encrypted hash of exchanged messages
+[SRV] I am finished and here is encrypted hash of exchanged messages
 \end{lstlisting}
 \end{frame}
 
 
-\begin{frame}[fragile]{TLS DH Handshake Sketch}
+\begin{frame}[fragile]{TLS 1.3 ECDH Handshake Sketch}
 \begin{lstlisting}[style=mini]
 [CLT] Hello, I support these cipher suites,
-      and here is my CLIENT RANDOM number
+      I expect you to use these DH handshake parameters,
+      here is my CLIENT DH KEY SHARE
+      and my CLIENT RANDOM number
 
-[SRV] Hello, I have picked cipher suite AES256-SHA256,
-      here is my SIGNED SERVER CERTIFICATE
-      and here is my SERVER RANDOM number
-
-[SRV] Here is my signed SERVER DH PUBLIC KEY
-
-[CLT] Here is my CLIENT DH PUBLIC KEY
-
-PRE MASTER SECRET = function (CLIENT DH PUBLIC KEY, SERVER DH PUBLIC KEY)
+PRE MASTER SECRET = function (CLIENT DH KEY SHARE, SERVER DH KEY SHARE)
 MASTER SECRET = function (PRE MASTER SECRET, CLIENT RANDOM, SERVER RANDOM)
 various session keys = function (MASTER SECRET)
 
-[CLT] Finished and here is encrypted hash of exchanged messages
+[SRV] Hello, I have picked this cipher suite,
+      here is my SERVER DH KEY SHARE
+      and my SERVER RANDOM number,
+      and I am finished and here is encrypted hash of exchanged messages
+      and my encrypted SIGNED SERVER CERTIFICATE
 
-[SRV] Finished and here is encrypted hash of exchanged messages
+[CLT] I am finished and here is encrypted hash of exchanged messages
 \end{lstlisting}
 \end{frame}
 
