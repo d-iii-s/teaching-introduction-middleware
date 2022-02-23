@@ -1,0 +1,18 @@
+#!/bin/bash
+set -euo pipefail
+
+TARGET="/mnt/raider-web/d3s.mff.cuni.cz/files/teaching/nswi163"
+
+# Incorporate lfs.
+git lfs post-commit "$@"
+
+# Sanity checks.
+[[ "$(git branch --show-current)" == "master" ]] || exit 0
+[[ -d "${TARGET}" ]] || exit 8
+
+# Build content.
+make --directory=tex
+
+# Update content.
+( cd "${TARGET}" && rm --force -- *.pdf )
+( cd tex && tar --create -- *.pdf | pv | tar --extract --directory "${TARGET}" )
