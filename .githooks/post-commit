@@ -15,4 +15,4 @@ make --directory=tex
 
 # Update content.
 ( cd "${TARGET}" && rm --force -- *.pdf )
-( cd tex && tar --create -- *.pdf | pv | tar --extract --directory "${TARGET}" )
+( cd tex/out && tar --create -- *.pdf | pv | tar --extract --directory "${TARGET}" )

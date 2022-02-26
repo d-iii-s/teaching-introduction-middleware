@@ -1,21 +1,4 @@
-*-beamer.aux
-*-beamer.fdb_latexmk
-*-beamer.fls
-*-beamer.log
-*-beamer.nav
-*-beamer.out
-*-beamer.pdf
-*-beamer.snm
-*-beamer.toc
-*-beamer.vrb
+out
 
-*-article.aux
-*-article.fdb_latexmk
-*-article.fls
-*-article.log
-*-article.nav
-*-article.out
+*-beamer.pdf
 *-article.pdf
-*-article.snm
-*-article.toc
-*-article.vrb
