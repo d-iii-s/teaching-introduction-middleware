@@ -48,8 +48,8 @@ int main ()
     // It is also possible to use shutdown to close input and output streams independently.
 
     int shutdown_status = shutdown (client_socket, SHUT_RDWR);
-    ASSERT (shutdown_status == 0, "Failed to shutdown incoming connection.");
+    ASSERT (shutdown_status == 0, "Failed to shutdown outgoing connection.");
 
     int close_status = close (client_socket);
-    ASSERT (close_status == 0, "Failed to close incoming connection.");
+    ASSERT (close_status == 0, "Failed to close outgoing connection.");
 }
