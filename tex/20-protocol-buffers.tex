@@ -8,13 +8,14 @@
 \section{Technology Overview}
 
 
-% Selected Version History
-% - 3.19
-% - 3.15
+% https://github.com/protocolbuffers/protobuf/blob/main/CHANGES.txt
+%
+% - *.21.7
+% - *.15
 %     - Optional presence specifier for singular fields
-% - 3.6
+% - *.6
 %     - Dropped support for certain older programming language versions
-% - 3.5
+% - *.5
 %     - Unknown fields preserved by default and can be discarded explicitly
 % - 3.0
 %     - Unknown fields discarded
@@ -394,6 +395,21 @@ AnExampleMessage.FromString (file.read ())
 \end{frame}
 
 
+\begin{frame}[fragile]{Show Your Code ...}
+    \begin{block}{Query Host Name}
+\begin{lstlisting}[language=bash,style=mini]
+> hostname
+u1-22
+\end{lstlisting}
+    \end{block}
+    \begin{block}{Run Screen Sharing}
+\begin{lstlisting}[language=bash,style=mini]
+> x11vnc -viewonly
+\end{lstlisting}
+    \end{block}
+\end{frame}
+
+
 \section{Assignment Part II}
 
 
@@ -420,7 +436,7 @@ AnExampleMessage.FromString (file.read ())
 \begin{frame}{Submission}
     \begin{block}{GitLab}
         Use your personal GitLab repository under \\
-        \url{https://gitlab.mff.cuni.cz/teaching/nswi163/2021}.
+        \url{https://gitlab.mff.cuni.cz/teaching/nswi163/2022}.
     \end{block}
     \begin{block}{Requirements}
         \begin{itemize}
@@ -428,6 +444,7 @@ AnExampleMessage.FromString (file.read ())
             \item Write brief report in \lstinline{SOLUTION.md}.
             \item Include build scripts with instructions.
             \item Do not commit binaries or temporary build artifacts.
+            \item Tag your solution with `task-02` and push the tag.
         \end{itemize}
     \end{block}
 \end{frame}
