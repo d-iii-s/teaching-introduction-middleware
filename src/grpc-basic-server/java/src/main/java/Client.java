@@ -1,3 +1,5 @@
+import java.util.concurrent.TimeUnit;
+
 import example.Example.AnExampleMessage;
 import example.Example.MoreExampleMessages;
 
@@ -30,6 +32,10 @@ public class Client {
 
             System.out.println ("Response:");
             System.out.println (response.toString ());
+
+            // Orderly channel shutdown.
+            channel.shutdown ();
+            channel.awaitTermination (666, TimeUnit.SECONDS);
         }
         catch (Exception e) {
             System.out.println (e);
