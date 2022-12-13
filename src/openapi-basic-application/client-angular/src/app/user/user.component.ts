@@ -41,7 +41,7 @@ export class UserComponent implements OnInit {
     const idString = this.route.snapshot.paramMap.get ('id');
     if (idString != null) {
       const idNumber = Number.parseInt (idString);
-      this.backend.deleteUser (idNumber).subscribe (() => this.router.navigate (['/']));
+      this.backend.deleteUser (idNumber).subscribe (() => this.router.navigate (['/list']));
     }
   }
 }
