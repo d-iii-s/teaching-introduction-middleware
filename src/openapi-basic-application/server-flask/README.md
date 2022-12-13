@@ -12,9 +12,3 @@ Before building the example, be sure to run the `fetch.sh` script in the parent 
 ```
 
 The user interface is available at https://localhost:8080/v1/ui.
-
-## Compatibility
-
-The generated application does not support CORS requests.
-The controller works around this by adding CORS headers manually.
-This is not enough for requests with CORS preflight and therefore certain clients will fail.
