@@ -8,5 +8,5 @@ Before building the example, be sure to run the `fetch.sh` script in the parent 
 
 ```
 ./build.sh
-node_modules/@angular/cli/bin/ng serve --open
+node_modules/@angular/cli/bin/ng.js serve --open
 ```

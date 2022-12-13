@@ -1,3 +1,6 @@
+# Caches
+/.angular
+
 # Node packages.
 /node_modules
 
