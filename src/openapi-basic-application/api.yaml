@@ -52,7 +52,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-    post:
+    put:
       x-openapi-router-controller: controllers.users
       summary: Update user
       operationId: updateUser
